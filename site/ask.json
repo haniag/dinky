@@ -1,0 +1,90 @@
+{
+ "app": "Dinky",
+ "line": "Dinky makes files smaller.",
+ "version": "2.15.0",
+ "email": "derek@testamentmade.com",
+ "voice": "Friendly, plain and a little cheeky about making files small. Keep it light; never oversell.",
+ "faq": [
+  {
+   "id": "faq-macos-says-dinky-can-t-be-opened-what-do-i-do",
+   "q": "macOS says Dinky can't be opened — what do I do?",
+   "a": "That's Gatekeeper — macOS blocks first launch for apps outside the App Store and Apple Developer Program."
+  },
+  {
+   "id": "faq-only-mac",
+   "q": "Only Mac?",
+   "a": "Yes. It’s SwiftUI + macOS frameworks; a Windows or Linux port would be a different app."
+  },
+  {
+   "id": "faq-what-mac-and-macos-version-does-it-require",
+   "q": "What Mac and macOS version does it require?",
+   "a": "Apple Silicon (M-series Mac). Intel-based Macs are not supported for the current DMG and Homebrew cask. macOS 15 Sequoia or later. On macOS 26 Tahoe you get the full liquid glass UI; on Sequoia it falls back to the frosted material look."
+  },
+  {
+   "id": "faq-is-it-actually-free",
+   "q": "Is it actually free?",
+   "a": "Yes. Free to download, free to use, open source on GitHub under MIT. No trial, no watermarks, no \"pro\" tier."
+  },
+  {
+   "id": "faq-does-dinky-send-my-files-anywhere",
+   "q": "Does Dinky send my files anywhere?",
+   "a": "Nope. Everything runs locally on your Mac — no Dinky servers, no account. Once a day the app checks GitHub for a newer release (that's the only automatic outbound request). URL Drop only hits a URL you give it. Details: Your data, in plain English."
+  },
+  {
+   "id": "faq-is-dinky-notarized-why-isn-t-it-on-the-app-store",
+   "q": "Is Dinky notarized? Why isn't it on the App Store?",
+   "a": "It isn't Apple-notarized or Mac App Store today. That's distribution — the binary ships straight from GitHub as free MIT open source. For what the app actually talks to over the network, read Your data, in plain English. First-launch Gatekeeper pain is separate:"
+  },
+  {
+   "id": "faq-can-i-use-dinky-from-terminal-or-ai-agents",
+   "q": "Can I use Dinky from Terminal or AI agents?",
+   "a": "Yep — pro users can build the local dinky CLI from this repo and run dinky compress --json or dinky serve on 127.0.0.1. See local CLI docs for examples and schema details."
+  },
+  {
+   "id": "faq-what-happens-to-my-originals",
+   "q": "What happens to my originals?",
+   "a": "In Settings → Original Files, choose Keep, Move to Trash, or a backup folder. Default is Keep. Watch Folders can use a different setting — handy if you want a watched folder to empty itself into Trash while everything else stays put."
+  },
+  {
+   "id": "faq-what-input-formats-does-dinky-support",
+   "q": "What input formats does Dinky support?",
+   "a": "Images: JPG, PNG, WebP, AVIF, HEIC/HEIF, TIFF, BMP → WebP, AVIF, lossless PNG, or HEIC. Audio: AAC (M4A), ALAC, WAV, AIFF, FLAC, MP3 — cross‑convert via macOS afconvert, with bundled LAME for MP3 encode. Video: MP4/MOV → MP4 (H.264 or HEVC); optional FPS cap. PDFs: flatten, preserve, target size; scan-like PDFs can get OCR for search first."
+  },
+  {
+   "id": "faq-what-are-presets",
+   "q": "What are presets?",
+   "a": "Saved settings (format, quality, destination, etc.) — one click from the sidebar. Create them in Settings → Presets."
+  },
+  {
+   "id": "faq-can-dinky-compress-files-automatically",
+   "q": "Can Dinky compress files automatically?",
+   "a": "Yes, with Watch Folder. Any supported file saved or moved into a watched folder is picked up and compressed — handy for Figma, Lightroom, or screenshot exports. You can watch a path inside Dropbox, Google Drive, iCloud Drive, or any other cloud folder that syncs to your Mac; Dinky reacts once the file is fully on disk (the sync app has to finish downloading first)."
+  },
+  {
+   "id": "faq-can-dinky-compress-something-from-a-url",
+   "q": "Can Dinky compress something from a URL?",
+   "a": "Yes. Drag a direct media link (https://…/photo.jpg, etc.) onto the window, or copy it and hit ⌘⇧V (Clipboard Compress). Direct file URLs only — not web pages."
+  },
+  {
+   "id": "faq-can-i-share-a-url-s-compressed-version-straight-to-dropbox-o",
+   "q": "Can I share a URL’s compressed version straight to Dropbox or Google Drive?",
+   "a": "Not directly. Set a preset’s destination to a cloud-synced folder (e.g. ~/Dropbox/Compressed/) so outputs sync automatically. The same idea applies to Watch Folder: pick a watched path under your Dropbox (or Drive) folder for inputs, or a synced subfolder as the destination so compressed files upload with everything else."
+  },
+  {
+   "id": "faq-what-if-dinky-can-t-hit-my-target-file-size",
+   "q": "What if Dinky can’t hit my target file size?",
+   "a": "Dinky walks quality down as far as your preset allows to stay under the cap. If the file is still larger than your target at minimum quality, you’ve hit the practical floor for that source at its current pixel dimensions — Dinky returns the smallest output it could produce, not a magically smaller one."
+  },
+  {
+   "id": "faq-what-changed-in-2-0",
+   "q": "What changed in 2.0?",
+   "a": "The 1.x line (from 1.0) was images only. 2.0 added videos and PDFs alongside images. 2.10 added audio compression and an optional video FPS cap. Older 1.x DMGs and ZIPs stay on GitHub Releases for archival use."
+  },
+  {
+   "id": "faq-who-made-this-and-why",
+   "q": "Who made this and why?",
+   "a": "Derek Castelli is a freelance web designer in Figma and Webflow. He made Dinky after Optimage crashed mid-project."
+  }
+ ],
+ "more": "# Welcome\n\nDinky makes files dinky. Drop something in, get a smaller version out — same look, less weight.\n\nIt works on **images** (JPEG, PNG, WebP, AVIF, HEIC/HEIF, TIFF, BMP), **videos** (MP4, MOV, M4V), and **PDFs**.\n\nEverything happens on your Mac. Nothing is uploaded.\n\n---\n\n## Quick start\n\n1. Drag a file (or a pile of them) onto Dinky's window.\n2. Watch the count go down.\n3. Find the smaller copies next to the originals (default), in your Downloads folder, or in a folder you choose.\n\nThat's it. The defaults are good. Read on if you want to bend them to your will.\n\n---\n\n## Ways to compress\n\nYou don't have to open the app first. Pick whichever fits how you work.\n\n- **Drag & drop** onto the Dinky window or the Dock icon.\n- **Hide from Dock** — Settings → General → Behavior (requires **Open at login**) keeps Dinky running without a Dock icon or App Switcher entry (Dock-icon drops need this off).\n- **Open Files…** — `{{SK_OPEN_FILES}}` to pick from a sheet.\n- **Clipboard Compress** — `{{SK_PASTE}}` pastes a supported **file** copied in Finder (images, videos, PDFs) or **raw image** data (PNG/TIFF from screenshots or browsers).\n- **Right-click in Finder → Services → Compress with Dinky** — works on selections of any size.\n- **Watch a folder** — Dinky compresses anything new that lands in it. (See *Watch folders* below.)\n- **Quick Action** — assign a keyboard shortcut to \"Compress with Dinky\" in System Settings → Keyboard → Keyboard Shortcuts → Services.\n\n---\n\n## Where files go\n\nSet this once in **Settings → Output**.\n\n- **Same folder as original** *(default)* — keeps things tidy and local.\n- **Downloads folder** — good if you process a lot from email or messages.\n- **Custom folder…** — point Dinky anywhere.\n\n### Filenames\n\n- **Append \"-dinky\"** *(default)* — `photo.jpg` becomes `photo-dinky.jpg`. Originals are safe.\n- **Replace original** — overwrites the file. Combine with *Move originals to trash* in **General** if you want one clean file at the end.\n- **Custom suffix** — for the workflow tinkerers. Use what suits your filing system.\n\n> **Pro tip:** Presets can override save location and filename per rule. Use that for things like \"screenshots → `~/Desktop/web/`, replace original\".\n\n---\n\n## Sidebar & formats\n\nThe sidebar on the right of the main window is where you tell Dinky **what** to make.\n\n### Simple sidebar (default)\n\nThree plain-language choices: **Image**, **Video**, **PDF**. Pick one per category and drop. Dinky figures out a sensible encoder, quality, and size.\n\n**Still images:** Dinky **converts** to WebP, AVIF, lossless PNG, or HEIC — new files with that extension, not an in-place JPEG recompress. **Auto** picks AVIF for most photos and WebP for graphics; turn off **Auto** in the full sidebar or use **Settings → Presets** to lock one format.\n\n### Full sidebar\n\nToggle **Settings → General → Use simple sidebar** off (or flip individual sections on) to expose every control:\n\n- **Images** — format (Auto, WebP, AVIF, lossless PNG, or HEIC), content hint (photo / illustration / screenshot), max width, max file size. With **Smart quality** off and a fixed format, you also get AVIF chroma, lossless WebP, or optimized PNG options in the sidebar.\n- **Videos** — codec family (H.264 / HEVC / AV1), quality tier, strip audio.\n- **PDFs** — preserve text & links, or flatten to images for the smallest possible file.\n\n---\n\n## Smart quality\n\nWhen **Smart quality** is on (default for new presets), Dinky inspects each file and picks settings for it:\n\n- Images get an encoder tuned to their content (busy photo vs. graphic — UI, illustration, logo, screenshot), including AVIF chroma subsampling and WebP near-lossless when appropriate.\n- Videos get a tier based on resolution and source bitrate, then nudged for content type — screen recordings and animation / motion graphics move up a tier so text and edges stay readable. Camera footage is identified from EXIF make/model so it isn't over-protected. HDR sources (Dolby Vision, HDR10, HLG) are exported with HEVC to preserve color and highlight detail; H.264 would silently flatten them to SDR.\n- PDFs get a tier based on document complexity and whether they're text-first or image-heavy. **Preserve text** uses Smart quality to try several **qpdf** passes when Experimental preserve is off, then PDFKit if needed. **Smallest file (flatten)** can turn on **Auto-grayscale monochrome scans** (in the preset) so black-and-white scans use grayscale without enabling **Grayscale PDF** for everything.\n\nTurn it off in any preset under **Compression** when you want a fixed quality tier (Balanced / High for video, Low / Medium / High for PDFs) — useful for batches that need predictable results.\n\n---\n\n## Presets\n\nPresets are saved combinations of settings. Build one for each repeating task.\n\nExamples that work well:\n\n- **Web hero images** — WebP, max width 1920, append `-web`.\n- **Client deliverables** — WebP, max width 2560, replace original, save to `~/Deliverables/`.\n- **Screen recordings** — H.264 Balanced, strip audio.\n- **Scanned PDFs** — flatten, medium quality, grayscale.\n\nCreate them in **Settings → Presets**. Each can:\n\n- Apply to all media or just one type (Image / Video / PDF).\n- Use its own save location and filename rule.\n- Watch its own folder *(see below)*.\n- Strip metadata, sanitize filenames, open the output folder when done.\n\nSwitch the active preset from the sidebar at any time.\n\n---\n\n## Watch folders\n\nDrop files into a folder and let Dinky handle them in the background.\n\n- **Global watch** — *Settings → Watch → Global*. Uses whatever the sidebar is currently set to. Good for an \"incoming\" or screenshot folder.\n- **Per-preset watch** — each preset can also watch its own folder with its own rules. Independent of the sidebar — change the sidebar all you want, the preset still does its thing.\n\n> **Pro tip:** Combine \"screen recordings folder\" + a preset that strips audio and re-encodes to H.264 Balanced. Hit `⌘⇧5`, screen-record, hit stop — Dinky has a small file ready before you reach the Finder.\n\n---\n\n## Manual mode\n\nTurn on **Settings → General → Manual mode** when you want full control.\n\nFiles dropped in won't auto-compress. Right-click any row to pick a format on the spot, use **File → Compress Now** (`{{SK_COMPRESS_NOW}}`) when the queue is ready, or change settings in the sidebar first. Useful when one batch contains very different files.\n\n---\n\n## Keyboard shortcuts\n\nYou’ll find the same list in **Settings → Shortcuts** so you don’t have to dig through this page.\n\n| Shortcut | Action |\n| --- | --- |\n| `{{SK_OPEN_FILES}}` | Open files… |\n| `{{SK_PASTE}}` | Clipboard Compress |\n| `{{SK_COMPRESS_NOW}}` | Compress Now (runs the queue — especially useful in Manual mode) |\n| `{{SK_CLEAR_ALL}}` | Clear All |\n| `{{SK_TOGGLE_SIDEBAR}}` | Toggle format sidebar |\n| `{{SK_DELETE}}` | Delete selected rows |\n| `{{SK_SETTINGS}}` | Settings |\n| `{{SK_HELP}}` | This Help window |\n\nAdd your own for *Compress with Dinky* in **System Settings → Keyboard → Keyboard Shortcuts → Services**.\n\n---\n\n## Shortcuts app\n\nDinky registers a **Compress Images** action for the Shortcuts app. Use it to pipe Finder files or other actions through Dinky with a chosen format — same engine as in-app compression (respects Settings for smart quality, resize, and metadata).\n\n---\n\n## Privacy & safety\n\n- Everything runs **locally**. No uploads, no telemetry, no account.\n- **Crash reports** are only sent if *you* choose to — via the post-crash prompt, the \"Report a Bug…\" menu, or the error detail sheet. If you've opted into macOS diagnostic sharing in System Settings, Apple also delivers anonymised crash data to Dinky on your behalf via MetricKit, with no additional data leaving your Mac.\n- The encoders (`cwebp`, `avifenc`, `oxipng`, plus Apple's built-in PDF and AVFoundation video pipelines) ship inside the app and read your files directly.\n- Originals are kept by default. *Move originals to trash after compressing* is opt-in, in **Settings → General**.\n- *Skip if savings below* (off by default) protects already-lean files from being re-encoded for nothing.\n- *Strip metadata* in any preset removes EXIF, GPS, camera info, and color profiles. Worth it before publishing photos to the web.\n\n---\n\n## Troubleshooting\n\n**A file came out larger than the original.**\nDinky keeps the original instead. You'll see *\"Couldn't make this one any smaller. Keeping the original.\"* in the row.\n\n**A file was skipped.**\nEither it was already very small (under your *Skip if savings below* threshold), or the encoder couldn't read it. Click the row for details.\n\n**A video is taking a long time.**\nVideo re-encoding is CPU-heavy. The *Batch speed* setting in **Settings → General** controls how many files run at once — drop it to **Fast** if your Mac is doing other things.\n\n**My PDF lost text selection / hyperlinks.**\nYou used *Smallest file (flatten pages)*. Switch the preset's PDF output to *Preserve text (best-effort size)* and re-run. Flatten is for reliable smaller files; preserve keeps text and links when optimization actually reduces size.\n\n**Right-click \"Compress with Dinky\" isn't showing up.**\nOpen Dinky once after installing so macOS registers the Service. If it still doesn't appear, enable it in **System Settings → Keyboard → Keyboard Shortcuts → Services → Files and Folders**.\n\n**Why doesn't Dinky output JPEG?**\nWebP and AVIF are strictly better than JPEG — same visual quality, smaller file, and supported everywhere that matters. If your platform requires a `.jpg`, try WebP first; it's accepted almost universally now. If you hit a place that genuinely rejects it, get in touch and let us know.\n\n---\n\n## Get in touch\n\n- Site: [dinkyfiles.com](https://dinkyfiles.com)\n- Code & issues: [github.com/heyderekj/dinky](https://github.com/heyderekj/dinky)\n- Email: [derek@testamentmade.com](mailto:derek@testamentmade.com)\n\nBuilt by Derek Castelli. Suggestions, bugs, and \"could it also do…\" are all welcome.\n"
+}
