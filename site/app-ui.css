@@ -269,10 +269,11 @@
 /* ---------- Preferences window (PreferencesView › Watch) ---------- */
 .dk-prefs { flex-direction: row; padding: 8px; gap: 0; }
 .dk-prefs__side {
-  position: relative; flex: none; width: 196px; display: flex; flex-direction: column; gap: 1px; padding: 10px 8px; border-radius: 16px;
+  position: relative; flex: none; width: 196px; display: flex; flex-direction: column; gap: 1px; padding: 0 8px 10px; border-radius: 16px;
   background: var(--dk-panel); box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.08), 0 8px 24px -14px rgb(20 10 70 / 0.35);
 }
-.dk-prefs__side .dk-lights { padding: 4px 4px 14px; margin: 0; }
+/* As tall as the toolbar beside it (48px), so the lights and the title share a middle. */
+.dk-prefs__side .dk-lights { height: 48px; display: flex; align-items: center; padding: 0 6px; margin: 0; flex: none; }
 .dk-prefs__sec { padding: 10px 8px 3px; font-size: 11px; font-weight: 600; color: var(--dk-3); }
 .dk-prefs__item { display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 8px; border-radius: 8px; font-size: 13px; }
 .dk-prefs__item .dk-i { width: 17px; height: 17px; stroke-width: 1.5; color: var(--dk-2); }
