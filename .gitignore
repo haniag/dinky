@@ -17,3 +17,4 @@ Dinky-*.zip
 
 # SwiftPM package build (DinkyCoreImage)
 DinkyCoreImage/.build/
+.wrangler/
