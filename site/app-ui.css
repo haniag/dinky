@@ -182,7 +182,7 @@
 
 /* Queued rows open the right-click menu */
 .dk-row--menu { cursor: context-menu; border-radius: 8px; }
-.dk-row--menu:hover { background: var(--dk-fill-2); }
+@media (hover: hover) { .dk-row--menu:hover { background: var(--dk-fill-2); } }
 .dk-row--menu:focus-visible { box-shadow: inset 0 0 0 2px var(--dk-accent); }
 .dk-row--menu[aria-expanded='true'] { background: color-mix(in srgb, var(--dk-accent) 14%, transparent); }
 
@@ -373,14 +373,14 @@
   box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.8), 0 0 0 0.5px rgb(20 10 70 / 0.12), 0 6px 16px -8px rgb(20 10 70 / 0.4);
   transition: background var(--t-ui, 180ms) ease, opacity 0.3s ease;
 }
-.dk-replay:hover { background: rgb(255 255 255 / 0.7); }
+@media (hover: hover) { .dk-replay:hover { background: rgb(255 255 255 / 0.7); } }
 .dk-replay svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .dk-replay:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .dk-replay[data-busy] { opacity: 0.55; pointer-events: none; }
 @media (prefers-color-scheme: dark) {
   .dk-replay { color: rgb(244 242 255 / 0.92); background: rgb(255 255 255 / 0.12); box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.18), 0 6px 16px -8px rgb(0 0 0 / 0.6); }
-  .dk-replay:hover { background: rgb(255 255 255 / 0.2); }
 }
+@media (prefers-color-scheme: dark) and (hover: hover) { .dk-replay:hover { background: rgb(255 255 255 / 0.2); } }
 
 .dk-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
@@ -431,3 +431,21 @@
   .dk-keys { background: rgb(255 255 255 / 0.12); box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.18), 0 6px 16px -8px rgb(0 0 0 / 0.6); }
   .dk-keys kbd { color: rgb(244 242 255 / 0.92); background: rgb(255 255 255 / 0.14); box-shadow: 0 1px 0 rgb(0 0 0 / 0.4); }
 }
+
+/* ---------- Touch screens ----------
+   The windows stay drawn to the app's own sizes, so a few controls would be too small for a finger.
+   An invisible ::after widens what a tap can hit, and the right-click menu gets taller rows. */
+@media (pointer: coarse) {
+  .dk-chips > button, .dk-seg button { position: relative; }
+  .dk-chips > button::after { content: ''; position: absolute; inset: -12px -2px; }
+  .dk-seg button::after { content: ''; position: absolute; inset: -12px 0; }
+  .dk-handle::after { content: ''; position: absolute; inset: -14px; border-radius: 50%; }
+  .dk-replay { position: relative; }
+  .dk-replay::after { content: ''; position: absolute; inset: -7px -2px; border-radius: inherit; }
+  .dk-menu button { height: 34px; }
+}
+/* ---------- The narrow phone layout (app-ui.js adds .is-compact) ---------- */
+/* The drop zone's card stack would peek out beside the sidebar panel. */
+.dk-win.is-compact:has(.dk-side) .dk-stack { visibility: hidden; }
+/* Finished rows keep Quick Look but drop "Show in Finder", so the file names stay readable. */
+.dk-win.is-compact .dk-status > .dk-pill:not(.dk-pill--eye):not(.dk-pill--queued) { display: none; }

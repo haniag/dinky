@@ -9,13 +9,15 @@
   // requestAnimationFrame pauses in background tabs; fall back to timers so a demo never stalls half way
   const frame = (fn) => (document.hidden ? setTimeout(() => fn(performance.now()), 50) : requestAnimationFrame(fn));
 
-  /* ---------- Fit: the app's windows are drawn at 1:1 points, then zoomed down to fit their desktop ---------- */
+  /* ---------- Fit: the app's windows are drawn at 1:1 points, then zoomed down to fit their desktop ----------
+     On a phone the main windows (440–460pt) switch to a narrower 360pt layout, like a narrow window, so they
+     need less zoom and their text stays readable. Windows with their own compact layout set data-cw. */
   const fits = $$('.dk-fit > [data-w]');
   function fit() {
     for (const win of fits) {
       const avail = win.parentElement.clientWidth;
       const full = Number(win.dataset.w);
-      const compact = Number(win.dataset.cw || 0);
+      const compact = Number(win.dataset.cw || (full <= 460 ? 360 : 0));
       const useCompact = compact && avail < full * 0.78;
       const w = useCompact ? compact : full;
       win.classList.toggle('is-compact', !!useCompact);
@@ -46,20 +48,50 @@
   }
 
   /* ---------- Guided feature rows: steps on one side, a scene per step on the desktop ----------
-     Advances every 6.5s while the row is at least 45% in view and the pointer isn't over it.
-     No auto-advance with Reduced Motion. Opening a step fires scene:show on its scene. */
+     Advances every 6.5s while the row is at least 45% in view and the mouse isn't over it. It never
+     changes step while someone is scrolling or touching the page, and stops for good once someone taps
+     a step. No auto-advance with Reduced Motion. Opening a step fires scene:show on its scene. */
+  let lastScroll = 0, touching = false;
+  addEventListener('scroll', () => { lastScroll = performance.now(); }, { passive: true });
+  addEventListener('touchstart', () => { touching = true; }, { passive: true, capture: true });
+  addEventListener('touchend', () => { touching = false; lastScroll = performance.now(); }, { passive: true, capture: true });
+  addEventListener('touchcancel', () => { touching = false; }, { passive: true, capture: true });
+  const canHover = matchMedia('(hover: hover)');
   for (const row of $$('[data-guided]')) {
     const DUR = 6500;
     const steps = $$('[data-step]', row);
     const scenes = $$('[data-scene]', row);
-    let at = 0, timer = 0, inView = false;
+    const list = steps[0].parentElement;
+    let at = 0, timer = 0, inView = false, hovering = false, chosen = false, tapped = false;
     row.style.setProperty('--g-dur', DUR + 'ms');
     const schedule = () => {
       clearTimeout(timer);
-      const playing = inView && !still();
+      const playing = inView && !hovering && !chosen && !still();
       row.classList.toggle('is-playing', playing);
-      if (playing) timer = setTimeout(() => open((at + 1) % steps.length), DUR);
+      if (playing) timer = setTimeout(advance, DUR);
     };
+    const advance = () => {
+      // Someone is reading or scrolling: hold this step until they settle.
+      if (touching || performance.now() - lastScroll < 1200) { timer = setTimeout(advance, 600); return; }
+      open((at + 1) % steps.length);
+    };
+    /* Stacked (phones and tablets), the steps sit above the desktop. Reserve the height of the tallest
+       open step so changing step never moves the desktop or the rest of the page. */
+    let lastWidth = 0;
+    const reserve = () => {
+      if (list.offsetWidth === lastWidth) return;
+      lastWidth = list.offsetWidth;
+      list.style.minHeight = '';
+      if (!matchMedia('(max-width: 900px)').matches) return;
+      const text = (s) => $('.g-step__text', s);
+      const gap = parseFloat(getComputedStyle(list).rowGap) || 0;
+      const closed = steps.reduce((sum, s) => sum + s.offsetHeight - text(s).offsetHeight, 0) + gap * (steps.length - 1);
+      const tallest = Math.max(...steps.map((s) => text(s).scrollHeight + (s.classList.contains('is-on') ? 0 : 6)));
+      list.style.minHeight = Math.ceil(closed + tallest) + 'px';
+    };
+    reserve();
+    document.fonts?.ready.then(() => { lastWidth = 0; reserve(); });
+    if ('ResizeObserver' in window) new ResizeObserver(reserve).observe(list);
     const open = (n, focus = false) => {
       at = n;
       steps.forEach((s, k) => {
@@ -81,7 +113,8 @@
       schedule();
     };
     steps.forEach((s, k) => {
-      s.addEventListener('click', () => open(k));
+      s.addEventListener('pointerdown', (e) => { tapped = e.pointerType !== 'mouse'; });
+      s.addEventListener('click', () => { if (tapped) chosen = true; tapped = false; open(k); });
       s.addEventListener('keydown', (e) => {
         const d = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 0;
         if (!d) return;
@@ -89,11 +122,11 @@
         open((at + d + steps.length) % steps.length, true);
       });
     });
-    // Hovering the row holds the current step, so it doesn't change while someone reads or tries the demo.
-    row.addEventListener('pointerenter', () => { inView = false; schedule(); });
-    row.addEventListener('pointerleave', () => { inView = true; schedule(); });
+    // Hovering the row with a mouse holds the current step, so it doesn't change while someone reads or tries the demo.
+    row.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hovering = true; schedule(); } });
+    row.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { hovering = false; schedule(); } });
     if ('IntersectionObserver' in window) {
-      new IntersectionObserver(([e]) => { inView = e.isIntersecting && !row.matches(':hover'); schedule(); }, { threshold: 0.45 }).observe(row);
+      new IntersectionObserver(([e]) => { inView = e.isIntersecting; hovering = canHover.matches && row.matches(':hover'); schedule(); }, { threshold: 0.45 }).observe(row);
     }
   }
 
@@ -271,22 +304,22 @@
     menu.addEventListener('click', (e) => {
       const btn = e.target.closest('button');
       if (!btn || !owner) return;
-      if (btn.hasAttribute('data-sub')) { e.stopPropagation(); toggleSub(btn, true); return; }
+      // A submenu item only opens its submenu (as on the Mac). A tap fires pointerover first, which already opened it.
+      if (btn.hasAttribute('data-sub')) { e.stopPropagation(); openSub(btn, e.detail === 0); return; }
       const row = owner;
       if (btn.dataset.fmt) { close(); compress(row, btn.dataset.fmt); }
       else if (btn.dataset.act === 'remove') { close(); announce(`Removed ${$('.dk-row__name', row).textContent}.`); row.remove(); }
       else if (btn.dataset.act === 'clear') { close(); $$('.dk-row', results).forEach((r) => r.remove()); $('.dk-bar__status', results).textContent = 'Think dinky.'; $$('.dk-bar__btn', results).forEach((b) => b.remove()); announce('Cleared the list.'); }
     });
-    function toggleSub(btn, focus) {
+    function openSub(btn, focus) {
       const s = btn.nextElementSibling;
-      const show = s.hidden;
-      closeSubs();
-      if (show) { s.hidden = false; btn.setAttribute('aria-expanded', 'true'); if (focus) items(s)[0].focus(); }
+      if (s.hidden) { closeSubs(); s.hidden = false; btn.setAttribute('aria-expanded', 'true'); }
+      if (focus) items(s)[0].focus();
     }
     menu.addEventListener('pointerover', (e) => {
       const btn = e.target.closest('button');
       if (!btn || btn.closest('.dk-menu .dk-menu')) return;
-      if (btn.hasAttribute('data-sub')) { if (btn.getAttribute('aria-expanded') !== 'true') toggleSub(btn, false); }
+      if (btn.hasAttribute('data-sub')) openSub(btn, false);
       else closeSubs();
     });
     menu.addEventListener('keydown', (e) => {
@@ -294,7 +327,7 @@
       const list = items(cur.parentElement);
       const i = list.indexOf(cur);
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); list[(i + (e.key === 'ArrowDown' ? 1 : -1) + list.length) % list.length].focus(); }
-      else if (e.key === 'ArrowRight' && cur.hasAttribute('data-sub')) { e.preventDefault(); toggleSub(cur, true); }
+      else if (e.key === 'ArrowRight' && cur.hasAttribute('data-sub')) { e.preventDefault(); openSub(cur, true); }
       else if (e.key === 'ArrowLeft' && cur.parentElement !== menu) { e.preventDefault(); const opener = cur.parentElement.previousElementSibling; closeSubs(); opener.focus(); }
       else if (e.key === 'Escape') { e.preventDefault(); close(true); }
       else if (e.key === 'Tab') close(false);
@@ -324,13 +357,20 @@
       cmp.toggleAttribute('data-near-right', pos >= 85);
     };
     const fromEvent = (e) => { const r = cmp.getBoundingClientRect(); set(((e.clientX - r.left) / r.width) * 100); };
+    // A mouse moves the line at once. A finger moves it on a sideways drag or a tap, so scrolling the page
+    // past the picture (touch-action: pan-y hands that to the browser) never moves it.
     cmp.addEventListener('pointerdown', (e) => {
       if (e.button !== 0) return;
+      const mouse = e.pointerType === 'mouse';
+      const x0 = e.clientX;
+      let moved = false;
       cmp.setPointerCapture(e.pointerId);
-      fromEvent(e);
-      handle.focus({ preventScroll: true });
-      const move = (ev) => fromEvent(ev);
-      const up = () => { cmp.removeEventListener('pointermove', move); cmp.removeEventListener('pointerup', up); cmp.removeEventListener('pointercancel', up); };
+      if (mouse) { fromEvent(e); handle.focus({ preventScroll: true }); }
+      const move = (ev) => { if (!mouse && !moved && Math.abs(ev.clientX - x0) < 4) return; moved = true; fromEvent(ev); };
+      const up = (ev) => {
+        if (!mouse && !moved && ev.type === 'pointerup') fromEvent(ev);
+        cmp.removeEventListener('pointermove', move); cmp.removeEventListener('pointerup', up); cmp.removeEventListener('pointercancel', up);
+      };
       cmp.addEventListener('pointermove', move);
       cmp.addEventListener('pointerup', up);
       cmp.addEventListener('pointercancel', up);
