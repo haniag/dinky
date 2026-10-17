@@ -1,7 +1,7 @@
 // Dinky's recreated windows: fit each one to its desktop, and the small demos (drop zone, format picker,
 // right-click menu, before/after slider). Every file and size is made up. Honors Reduced Motion.
 (() => {
-  const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const still = () => document.documentElement.classList.contains('fmb-still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
