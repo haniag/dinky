@@ -6,6 +6,21 @@
  "voice": "Friendly, plain and a little cheeky about making files small. Keep it light; never oversell.",
  "faq": [
   {
+   "id": "faq-is-it-actually-free",
+   "q": "Is it actually free?",
+   "a": "Yes. Free to download, free to use, open source on GitHub under MIT. No trial, no watermarks, no \"pro\" tier."
+  },
+  {
+   "id": "faq-does-dinky-send-my-files-anywhere",
+   "q": "Does Dinky send my files anywhere?",
+   "a": "Nope. Everything runs locally on your Mac — no Dinky servers, no account. Once a day the app checks GitHub for a newer release (that's the only automatic outbound request). URL Drop only hits a URL you give it. Details: Your data, in plain English."
+  },
+  {
+   "id": "faq-what-happens-to-my-originals",
+   "q": "What happens to my originals?",
+   "a": "In Settings → Original Files, choose Keep, Move to Trash, or a backup folder. Default is Keep. Watch Folders can use a different setting — handy if you want a watched folder to empty itself into Trash while everything else stays put."
+  },
+  {
    "id": "faq-macos-says-dinky-can-t-be-opened-what-do-i-do",
    "q": "macOS says Dinky can't be opened — what do I do?",
    "a": "That's Gatekeeper — macOS blocks first launch for apps outside the App Store and Apple Developer Program."
@@ -21,16 +36,6 @@
    "a": "Apple Silicon (M-series Mac). Intel-based Macs are not supported for the current DMG and Homebrew cask. macOS 15 Sequoia or later. On macOS 26 Tahoe you get the full liquid glass UI; on Sequoia it falls back to the frosted material look."
   },
   {
-   "id": "faq-is-it-actually-free",
-   "q": "Is it actually free?",
-   "a": "Yes. Free to download, free to use, open source on GitHub under MIT. No trial, no watermarks, no \"pro\" tier."
-  },
-  {
-   "id": "faq-does-dinky-send-my-files-anywhere",
-   "q": "Does Dinky send my files anywhere?",
-   "a": "Nope. Everything runs locally on your Mac — no Dinky servers, no account. Once a day the app checks GitHub for a newer release (that's the only automatic outbound request). URL Drop only hits a URL you give it. Details: Your data, in plain English."
-  },
-  {
    "id": "faq-is-dinky-notarized-why-isn-t-it-on-the-app-store",
    "q": "Is Dinky notarized? Why isn't it on the App Store?",
    "a": "It isn't Apple-notarized or Mac App Store today. That's distribution — the binary ships straight from GitHub as free MIT open source. For what the app actually talks to over the network, read Your data, in plain English. First-launch Gatekeeper pain is separate:"
@@ -39,11 +44,6 @@
    "id": "faq-can-i-use-dinky-from-terminal-or-ai-agents",
    "q": "Can I use Dinky from Terminal or AI agents?",
    "a": "Yep — pro users can build the local dinky CLI from this repo and run dinky compress --json or dinky serve on 127.0.0.1. See local CLI docs for examples and schema details."
-  },
-  {
-   "id": "faq-what-happens-to-my-originals",
-   "q": "What happens to my originals?",
-   "a": "In Settings → Original Files, choose Keep, Move to Trash, or a backup folder. Default is Keep. Watch Folders can use a different setting — handy if you want a watched folder to empty itself into Trash while everything else stays put."
   },
   {
    "id": "faq-what-input-formats-does-dinky-support",
@@ -56,7 +56,7 @@
    "a": "Saved settings (format, quality, destination, etc.) — one click from the sidebar. Create them in Settings → Presets."
   },
   {
-   "id": "faq-can-dinky-compress-files-automatically",
+   "id": "faq-watch-folder",
    "q": "Can Dinky compress files automatically?",
    "a": "Yes, with Watch Folder. Any supported file saved or moved into a watched folder is picked up and compressed — handy for Figma, Lightroom, or screenshot exports. You can watch a path inside Dropbox, Google Drive, iCloud Drive, or any other cloud folder that syncs to your Mac; Dinky reacts once the file is fully on disk (the sync app has to finish downloading first)."
   },

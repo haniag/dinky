@@ -1410,21 +1410,7 @@
       <label class="fask__field"><span class="fmb-orb" aria-hidden="true"></span><input name="q" type="text" placeholder="Ask a question about Dinky" aria-label="Ask a question about Dinky" maxlength="280" autocomplete="off" spellcheck="false" /></label>
     </form>
     <div class="fask__answer" data-ask-answer hidden><span class="fmb-orb" aria-hidden="true"></span><div><p data-ask-text aria-live="polite"></p><p data-ask-src hidden></p></div></div>
-    <div class="faq-grid">
-      <div class="faq-item" id="faq-macos-says-dinky-can-t-be-opened-what-do-i-do">
-        <h3 class="faq-q">macOS says Dinky can't be opened — what do I do?</h3>
-        <p class="faq-a">That's Gatekeeper — macOS blocks first launch for apps outside the App Store and Apple Developer Program. <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p>
-      </div>
-
-      <div class="faq-item" id="faq-only-mac">
-        <h3 class="faq-q">Only Mac?</h3>
-        <p class="faq-a">Yes. It’s SwiftUI + macOS frameworks; a Windows or Linux port would be a different app.</p>
-      </div>
-
-      <div class="faq-item" id="faq-what-mac-and-macos-version-does-it-require">
-        <h3 class="faq-q">What Mac and macOS version does it require?</h3>
-        <p class="faq-a"><strong>Apple Silicon</strong> (M-series Mac). Intel-based Macs are not supported for the current DMG and Homebrew cask. <strong>macOS 15 Sequoia</strong> or later. On macOS 26 Tahoe you get the full liquid glass UI; on Sequoia it falls back to the frosted material look.</p>
-      </div>
+    <div class="faq-grid" data-faq-collapsed>
 
       <div class="faq-item" id="faq-is-it-actually-free">
         <h3 class="faq-q">Is it actually free?</h3>
@@ -1436,61 +1422,76 @@
         <p class="faq-a">Nope. Everything runs locally on your Mac — no Dinky servers, no account. Once a day the app checks GitHub for a newer release (that&apos;s the only automatic outbound request). URL Drop only hits a URL you give it. Details: <a href="#data">Your data, in plain English</a>.</p>
       </div>
 
-      <div class="faq-item" id="faq-is-dinky-notarized-why-isn-t-it-on-the-app-store">
-        <h3 class="faq-q">Is Dinky notarized? Why isn&apos;t it on the App Store?</h3>
-        <p class="faq-a">It isn&apos;t Apple-notarized or Mac App Store today. That&apos;s distribution — the binary ships straight from GitHub as free MIT open source. For what the app actually talks to over the network, read <a href="#data">Your data, in plain English</a>. First-launch Gatekeeper pain is separate: <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p>
-      </div>
-
-      <div class="faq-item" id="faq-can-i-use-dinky-from-terminal-or-ai-agents">
-        <h3 class="faq-q">Can I use Dinky from Terminal or AI agents?</h3>
-        <p class="faq-a">Yep — pro users can build the local <code>dinky</code> CLI from this repo and run <code>dinky compress --json</code> or <code>dinky serve</code> on <code>127.0.0.1</code>. See <a href="https://github.com/heyderekj/dinky/blob/main/docs/local-cli.md" target="_blank" rel="noopener">local CLI docs</a> for examples and schema details.</p>
-      </div>
-
       <div class="faq-item" id="faq-what-happens-to-my-originals">
         <h3 class="faq-q">What happens to my originals?</h3>
         <p class="faq-a">In Settings → Original Files, choose Keep, Move to Trash, or a backup folder. Default is Keep. <a href="#faq-watch-folder">Watch Folders</a> can use a different setting — handy if you want a watched folder to empty itself into Trash while everything else stays put.</p>
       </div>
+      <div class="faq-item" id="faq-macos-says-dinky-can-t-be-opened-what-do-i-do">
+        <h3 class="faq-q">macOS says Dinky can't be opened — what do I do?</h3>
+        <p class="faq-a">That's Gatekeeper — macOS blocks first launch for apps outside the App Store and Apple Developer Program. <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p>
+      </div>
 
-      <div class="faq-item" id="faq-what-input-formats-does-dinky-support">
+      <div class="faq-item faq-more" id="faq-only-mac">
+        <h3 class="faq-q">Only Mac?</h3>
+        <p class="faq-a">Yes. It’s SwiftUI + macOS frameworks; a Windows or Linux port would be a different app.</p>
+      </div>
+
+      <div class="faq-item faq-more" id="faq-what-mac-and-macos-version-does-it-require">
+        <h3 class="faq-q">What Mac and macOS version does it require?</h3>
+        <p class="faq-a"><strong>Apple Silicon</strong> (M-series Mac). Intel-based Macs are not supported for the current DMG and Homebrew cask. <strong>macOS 15 Sequoia</strong> or later. On macOS 26 Tahoe you get the full liquid glass UI; on Sequoia it falls back to the frosted material look.</p>
+      </div>
+
+      <div class="faq-item faq-more" id="faq-is-dinky-notarized-why-isn-t-it-on-the-app-store">
+        <h3 class="faq-q">Is Dinky notarized? Why isn&apos;t it on the App Store?</h3>
+        <p class="faq-a">It isn&apos;t Apple-notarized or Mac App Store today. That&apos;s distribution — the binary ships straight from GitHub as free MIT open source. For what the app actually talks to over the network, read <a href="#data">Your data, in plain English</a>. First-launch Gatekeeper pain is separate: <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p>
+      </div>
+
+      <div class="faq-item faq-more" id="faq-can-i-use-dinky-from-terminal-or-ai-agents">
+        <h3 class="faq-q">Can I use Dinky from Terminal or AI agents?</h3>
+        <p class="faq-a">Yep — pro users can build the local <code>dinky</code> CLI from this repo and run <code>dinky compress --json</code> or <code>dinky serve</code> on <code>127.0.0.1</code>. See <a href="https://github.com/heyderekj/dinky/blob/main/docs/local-cli.md" target="_blank" rel="noopener">local CLI docs</a> for examples and schema details.</p>
+      </div>
+
+      <div class="faq-item faq-more" id="faq-what-input-formats-does-dinky-support">
         <h3 class="faq-q">What input formats does Dinky support?</h3>
         <p class="faq-a">Images: JPG, PNG, WebP, AVIF, HEIC/HEIF, TIFF, BMP → WebP, AVIF, lossless PNG, or HEIC. Audio: AAC (M4A), ALAC, WAV, AIFF, FLAC, MP3 — cross‑convert via macOS <code>afconvert</code>, with bundled LAME for MP3 encode. Video: MP4/MOV → MP4 (H.264 or HEVC); optional FPS cap. PDFs: flatten, preserve, target size; scan-like PDFs can get OCR for search first.</p>
       </div>
 
-      <div class="faq-item" id="faq-what-are-presets">
+      <div class="faq-item faq-more" id="faq-what-are-presets">
         <h3 class="faq-q">What are presets?</h3>
         <p class="faq-a">Saved settings (format, quality, destination, etc.) — one click from the sidebar. Create them in Settings → Presets.</p>
       </div>
 
-      <div class="faq-item" id="faq-can-dinky-compress-files-automatically">
+      <div class="faq-item faq-more" id="faq-watch-folder">
         <h3 class="faq-q">Can Dinky compress files automatically?</h3>
         <p class="faq-a">Yes, with Watch Folder. Any supported file saved or moved into a watched folder is picked up and compressed — handy for Figma, Lightroom, or screenshot exports. You can watch a path inside Dropbox, Google Drive, iCloud Drive, or any other cloud folder that syncs to your Mac; Dinky reacts once the file is fully on disk (the sync app has to finish downloading first).</p>
       </div>
 
-      <div class="faq-item" id="faq-can-dinky-compress-something-from-a-url">
+      <div class="faq-item faq-more" id="faq-can-dinky-compress-something-from-a-url">
         <h3 class="faq-q">Can Dinky compress something from a URL?</h3>
         <p class="faq-a">Yes. Drag a direct media link (<code>https://…/photo.jpg</code>, etc.) onto the window, or copy it and hit ⌘⇧V (Clipboard Compress). Direct file URLs only — not web pages.</p>
       </div>
 
-      <div class="faq-item" id="faq-can-i-share-a-url-s-compressed-version-straight-to-dropbox-o">
+      <div class="faq-item faq-more" id="faq-can-i-share-a-url-s-compressed-version-straight-to-dropbox-o">
         <h3 class="faq-q">Can I share a URL’s compressed version straight to Dropbox or Google Drive?</h3>
         <p class="faq-a">Not directly. Set a preset’s destination to a cloud-synced folder (e.g. <code>~/Dropbox/Compressed/</code>) so outputs sync automatically. The same idea applies to Watch Folder: pick a watched path under your Dropbox (or Drive) folder for inputs, or a synced subfolder as the destination so compressed files upload with everything else.</p>
       </div>
 
-      <div class="faq-item" id="faq-what-if-dinky-can-t-hit-my-target-file-size">
+      <div class="faq-item faq-more" id="faq-what-if-dinky-can-t-hit-my-target-file-size">
         <h3 class="faq-q">What if Dinky can’t hit my target file size?</h3>
         <p class="faq-a">Dinky walks quality down as far as your preset allows to stay under the cap. If the file is still larger than your target at minimum quality, you’ve hit the practical floor for that source at its current pixel dimensions — Dinky returns the smallest output it could produce, not a magically smaller one.</p>
       </div>
 
-      <div class="faq-item" id="faq-what-changed-in-2-0">
+      <div class="faq-item faq-more" id="faq-what-changed-in-2-0">
         <h3 class="faq-q">What changed in 2.0?</h3>
         <p class="faq-a">The 1.x line (from 1.0) was images only. 2.0 added videos and PDFs alongside images. 2.10 added audio compression and an optional video FPS cap. Older 1.x DMGs and ZIPs stay on <a href="https://github.com/heyderekj/dinky/releases" target="_blank">GitHub Releases</a> for archival use.</p>
       </div>
 
-      <div class="faq-item" id="faq-who-made-this-and-why">
+      <div class="faq-item faq-more" id="faq-who-made-this-and-why">
         <h3 class="faq-q">Who made this and why?</h3>
         <p class="faq-a"><a href="https://heyderekj.com" target="_blank">Derek Castelli</a> is a freelance web designer in Figma and Webflow. He made Dinky after Optimage crashed mid-project.</p>
       </div>
     </div>
+    <button type="button" class="faq-all" data-faq-all>Show all 16 questions</button>
 
   </section>
 
