@@ -36,14 +36,76 @@
     io.observe(el);
   }
 
+  /* A demo inside a guided row's scene plays each time its scene opens, and on first view only if
+     its scene is the open one. Outside a scene it plays once, when it scrolls into view. */
+  function whenShown(el, fn, threshold = 0.45) {
+    const scene = el.closest('[data-scene]');
+    if (!scene) { onVisible(el, fn, threshold); return; }
+    scene.addEventListener('scene:show', () => fn());
+    onVisible(el, () => { if (scene.classList.contains('is-on')) fn(); }, threshold);
+  }
+
+  /* ---------- Guided feature rows: steps on one side, a scene per step on the desktop ----------
+     Advances every 6.5s while the row is at least 45% in view and the pointer isn't over it.
+     No auto-advance with Reduced Motion. Opening a step fires scene:show on its scene. */
+  for (const row of $$('[data-guided]')) {
+    const DUR = 6500;
+    const steps = $$('[data-step]', row);
+    const scenes = $$('[data-scene]', row);
+    let at = 0, timer = 0, inView = false;
+    row.style.setProperty('--g-dur', DUR + 'ms');
+    const schedule = () => {
+      clearTimeout(timer);
+      const playing = inView && !still();
+      row.classList.toggle('is-playing', playing);
+      if (playing) timer = setTimeout(() => open((at + 1) % steps.length), DUR);
+    };
+    const open = (n, focus = false) => {
+      at = n;
+      steps.forEach((s, k) => {
+        const on = k === n;
+        s.classList.toggle('is-on', on);
+        s.setAttribute('aria-selected', String(on));
+        s.tabIndex = on ? 0 : -1;
+        // Restart the progress line
+        const bar = $('.g-step__bar', s);
+        if (bar) { bar.style.animation = 'none'; void bar.offsetWidth; bar.style.animation = ''; }
+      });
+      scenes.forEach((sc, k) => {
+        const on = k === n;
+        sc.classList.toggle('is-on', on);
+        sc.hidden = !on;
+        if (on) sc.dispatchEvent(new CustomEvent('scene:show'));
+      });
+      if (focus) steps[n].focus();
+      schedule();
+    };
+    steps.forEach((s, k) => {
+      s.addEventListener('click', () => open(k));
+      s.addEventListener('keydown', (e) => {
+        const d = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        open((at + d + steps.length) % steps.length, true);
+      });
+    });
+    // Hovering the row holds the current step, so it doesn't change while someone reads or tries the demo.
+    row.addEventListener('pointerenter', () => { inView = false; schedule(); });
+    row.addEventListener('pointerleave', () => { inView = true; schedule(); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => { inView = e.isIntersecting && !row.matches(':hover'); schedule(); }, { threshold: 0.45 }).observe(row);
+    }
+  }
+
   /* Progress a row from 0 to 100% over ms, then mark it done. */
-  function runRow(row, ms) {
+  function runRow(row, ms, alive = () => true) {
     return new Promise((resolve) => {
       const pct = $('.dk-prog__pct', row);
       row.dataset.state = 'working';
       if (still()) ms = Math.min(ms, 900);
       const t0 = performance.now();
       const step = (t) => {
+        if (!alive()) { resolve(); return; }
         const p = Math.min(1, (t - t0) / ms);
         const eased = 1 - Math.pow(1 - p, 1.6);
         row.style.setProperty('--p', eased.toFixed(3));
@@ -99,7 +161,27 @@
     }
 
     replay.addEventListener('click', play);
-    onVisible(demo, () => play());
+    whenShown(demo, () => play());
+  }
+
+  /* ---------- Scenes with a list that compresses when shown (clipboard, kinds, watch folder, kept file) ---------- */
+  for (const win of $$('[data-batch]')) {
+    const rows = $$('.dk-row[data-dur]', win);
+    const limit = Number(win.dataset.limit) || 3;
+    let run = 0;
+    async function play() {
+      const me = ++run;
+      rows.forEach((r) => { r.dataset.state = 'queued'; r.style.setProperty('--p', 0); const pct = $('.dk-prog__pct', r); if (pct) pct.textContent = '0%'; });
+      win.dataset.state = 'working';
+      await wait(still() ? 0 : 500); if (me !== run) return;
+      let next = 0;
+      const worker = async () => {
+        while (next < rows.length && me === run) { const r = rows[next++]; await runRow(r, Number(r.dataset.dur), () => me === run); }
+      };
+      await Promise.all(Array.from({ length: Math.min(limit, rows.length) }, worker));
+      if (me === run) win.dataset.state = 'done';
+    }
+    whenShown(win, play);
   }
 
   /* ---------- 2. Sidebar format picker: real radio chips ---------- */
@@ -265,12 +347,15 @@
         $$('[data-mode-btn]', wrap).forEach((x) => x.setAttribute('aria-pressed', x === b));
       });
     }
-    // A small nudge when it scrolls into view, so it reads as draggable
-    onVisible(wrap, async () => {
-      if (still()) return;
+    // A small nudge when it comes into view (or its scene opens), so it reads as draggable
+    let nudging = false;
+    whenShown(wrap, async () => {
+      if (still() || nudging || sheet.dataset.mode !== 'slider') return;
+      nudging = true;
       cmp.classList.add('is-nudging');
       for (const p of [50, 38, 62, 50]) { set(p); await wait(420); }
       cmp.classList.remove('is-nudging');
+      nudging = false;
     }, 0.6);
   }
 })();
