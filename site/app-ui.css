@@ -449,3 +449,7 @@
 .dk-win.is-compact:has(.dk-side) .dk-stack { visibility: hidden; }
 /* Finished rows keep Quick Look but drop "Show in Finder", so the file names stay readable. */
 .dk-win.is-compact .dk-status > .dk-pill:not(.dk-pill--eye):not(.dk-pill--queued) { display: none; }
+
+/* Controls read a touch heavier (macOS draws 13px controls bolder than the web does) and never wrap. */
+.dk-btn, .dk-seg button, .dk-chips > button { font-weight: 500; white-space: nowrap; }
+.dk-chips > [aria-checked='true'], .dk-chips > .is-on { font-weight: 600; }
