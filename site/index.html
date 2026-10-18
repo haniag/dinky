@@ -628,10 +628,15 @@
     .data-blurb-list li + li { margin-top: 8px; }
 
     /* ---------- FAQ ---------- */
-    .faq-grid { margin-top: 40px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    .faq-item { display: flex; flex-direction: column; gap: 8px; border-radius: 20px; padding: 20px 22px; scroll-margin-top: 90px; }
-    .faq-q { font-size: 17px; font-weight: 600; letter-spacing: -0.012em; line-height: 1.35; }
-    .faq-a { font-size: 15.5px; line-height: 1.55; color: var(--ink-soft); }
+    .faq-grid { margin-top: 40px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; }
+    /* Collapsible questions, like Slinky's: a row with a plus that turns to a cross, and the answer under it. */
+    .faq-item { border-radius: 20px; padding: 0; scroll-margin-top: 90px; }
+    .faq-q { list-style: none; cursor: pointer; padding: 18px 20px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 17px; font-weight: 600; letter-spacing: -0.012em; line-height: 1.35; border-radius: 20px; }
+    .faq-q::-webkit-details-marker { display: none; }
+    .faq-q::after { content: '+'; flex: none; font-weight: 400; font-size: 22px; line-height: 1; color: var(--muted); transition: rotate var(--t-ui) var(--ease); }
+    .faq-item[open] .faq-q::after { rotate: 45deg; }
+    .faq-q:focus-visible { outline: 2px solid var(--brand, currentColor); outline-offset: -2px; }
+    .faq-a { margin: 0; padding: 0 20px 18px; font-size: 15.5px; line-height: 1.55; color: var(--ink-soft); }
 
     /* ---------- Footer ---------- */
     .foot { margin-top: 112px; padding: 36px 0 48px; border-top: 1px solid var(--hair); text-align: center; font-size: 14.5px; color: var(--muted); }
@@ -840,7 +845,7 @@
     <a class="dock__app" href="https://slinkyfiles.com" aria-label="Slinky: Keeps secrets out of files"><img src="/family/slinky.webp" alt="" width="54" height="54" /><span class="dock__name" aria-hidden="true">Slinky</span></a>
   </nav>
   <script src="/family-dock.js?v=0df45895" defer></script>
-  <script src="/family-ask.js?v=315c713f" defer></script>
+  <script src="/family-ask.js?v=4f426407" defer></script>
   <script src="/family-menubar.js?v=f52333a4" defer></script>
   <script src="/app-ui.js" defer></script>
   <nav class="nav float-glass is-tucked" aria-label="Dinky">
@@ -1470,84 +1475,36 @@
     <div class="fask__answer" data-ask-answer hidden><span class="fmb-orb" aria-hidden="true"></span><div><p data-ask-text aria-live="polite"></p><p data-ask-src hidden></p></div></div>
     <div class="faq-grid" data-faq-collapsed>
 
-      <div class="faq-item" id="faq-is-it-actually-free">
-        <h3 class="faq-q">Is it actually free?</h3>
-        <p class="faq-a">Yes. Free to download, free to use, <a href="https://github.com/heyderekj/dinky" target="_blank">open source on GitHub</a> under MIT. No trial, no watermarks, no "pro" tier.</p>
-      </div>
+      <details class="faq-item" id="faq-is-it-actually-free"><summary class="faq-q">Is it actually free?</summary><p class="faq-a">Yes. Free to download, free to use, <a href="https://github.com/heyderekj/dinky" target="_blank">open source on GitHub</a> under MIT. No trial, no watermarks, no "pro" tier.</p></details>
 
-      <div class="faq-item" id="faq-does-dinky-send-my-files-anywhere">
-        <h3 class="faq-q">Does Dinky send my files anywhere?</h3>
-        <p class="faq-a">Nope. Everything runs locally on your Mac — no Dinky servers, no account. Once a day the app checks GitHub for a newer release (that&apos;s the only automatic outbound request). URL Drop only hits a URL you give it. Details: <a href="#data">Your data, in plain English</a>.</p>
-      </div>
+      <details class="faq-item" id="faq-does-dinky-send-my-files-anywhere"><summary class="faq-q">Does Dinky send my files anywhere?</summary><p class="faq-a">Nope. Everything runs locally on your Mac — no Dinky servers, no account. Once a day the app checks GitHub for a newer release (that&apos;s the only automatic outbound request). URL Drop only hits a URL you give it. Details: <a href="#data">Your data, in plain English</a>.</p></details>
 
-      <div class="faq-item" id="faq-what-happens-to-my-originals">
-        <h3 class="faq-q">What happens to my originals?</h3>
-        <p class="faq-a">In Settings → Original Files, choose Keep, Move to Trash, or a backup folder. Default is Keep. <a href="#faq-watch-folder">Watch Folders</a> can use a different setting — handy if you want a watched folder to empty itself into Trash while everything else stays put.</p>
-      </div>
-      <div class="faq-item" id="faq-macos-says-dinky-can-t-be-opened-what-do-i-do">
-        <h3 class="faq-q">macOS says Dinky can't be opened — what do I do?</h3>
-        <p class="faq-a">That's Gatekeeper — macOS blocks first launch for apps outside the App Store and Apple Developer Program. <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p>
-      </div>
+      <details class="faq-item" id="faq-what-happens-to-my-originals"><summary class="faq-q">What happens to my originals?</summary><p class="faq-a">In Settings → Original Files, choose Keep, Move to Trash, or a backup folder. Default is Keep. <a href="#faq-watch-folder">Watch Folders</a> can use a different setting — handy if you want a watched folder to empty itself into Trash while everything else stays put.</p></details>
+      <details class="faq-item" id="faq-macos-says-dinky-can-t-be-opened-what-do-i-do"><summary class="faq-q">macOS says Dinky can't be opened — what do I do?</summary><p class="faq-a">That's Gatekeeper — macOS blocks first launch for apps outside the App Store and Apple Developer Program. <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p></details>
 
-      <div class="faq-item faq-more" id="faq-only-mac">
-        <h3 class="faq-q">Only Mac?</h3>
-        <p class="faq-a">Yes. It’s SwiftUI + macOS frameworks; a Windows or Linux port would be a different app.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-only-mac"><summary class="faq-q">Only Mac?</summary><p class="faq-a">Yes. It’s SwiftUI + macOS frameworks; a Windows or Linux port would be a different app.</p></details>
 
-      <div class="faq-item faq-more" id="faq-what-mac-and-macos-version-does-it-require">
-        <h3 class="faq-q">What Mac and macOS version does it require?</h3>
-        <p class="faq-a"><strong>Apple Silicon</strong> (M-series Mac). Intel-based Macs are not supported for the current DMG and Homebrew cask. <strong>macOS 15 Sequoia</strong> or later. On macOS 26 Tahoe you get the full liquid glass UI; on Sequoia it falls back to the frosted material look.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-what-mac-and-macos-version-does-it-require"><summary class="faq-q">What Mac and macOS version does it require?</summary><p class="faq-a"><strong>Apple Silicon</strong> (M-series Mac). Intel-based Macs are not supported for the current DMG and Homebrew cask. <strong>macOS 15 Sequoia</strong> or later. On macOS 26 Tahoe you get the full liquid glass UI; on Sequoia it falls back to the frosted material look.</p></details>
 
-      <div class="faq-item faq-more" id="faq-is-dinky-notarized-why-isn-t-it-on-the-app-store">
-        <h3 class="faq-q">Is Dinky notarized? Why isn&apos;t it on the App Store?</h3>
-        <p class="faq-a">It isn&apos;t Apple-notarized or Mac App Store today. That&apos;s distribution — the binary ships straight from GitHub as free MIT open source. For what the app actually talks to over the network, read <a href="#data">Your data, in plain English</a>. First-launch Gatekeeper pain is separate: <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p>
-      </div>
+      <details class="faq-item faq-more" id="faq-is-dinky-notarized-why-isn-t-it-on-the-app-store"><summary class="faq-q">Is Dinky notarized? Why isn&apos;t it on the App Store?</summary><p class="faq-a">It isn&apos;t Apple-notarized or Mac App Store today. That&apos;s distribution — the binary ships straight from GitHub as free MIT open source. For what the app actually talks to over the network, read <a href="#data">Your data, in plain English</a>. First-launch Gatekeeper pain is separate: <button type="button" class="faq-inline-link" onclick="document.getElementById('gatekeeper-modal').classList.add('open')">How to fix it →</button></p></details>
 
-      <div class="faq-item faq-more" id="faq-can-i-use-dinky-from-terminal-or-ai-agents">
-        <h3 class="faq-q">Can I use Dinky from Terminal or AI agents?</h3>
-        <p class="faq-a">Yep — pro users can build the local <code>dinky</code> CLI from this repo and run <code>dinky compress --json</code> or <code>dinky serve</code> on <code>127.0.0.1</code>. See <a href="https://github.com/heyderekj/dinky/blob/main/docs/local-cli.md" target="_blank" rel="noopener">local CLI docs</a> for examples and schema details.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-can-i-use-dinky-from-terminal-or-ai-agents"><summary class="faq-q">Can I use Dinky from Terminal or AI agents?</summary><p class="faq-a">Yep — pro users can build the local <code>dinky</code> CLI from this repo and run <code>dinky compress --json</code> or <code>dinky serve</code> on <code>127.0.0.1</code>. See <a href="https://github.com/heyderekj/dinky/blob/main/docs/local-cli.md" target="_blank" rel="noopener">local CLI docs</a> for examples and schema details.</p></details>
 
-      <div class="faq-item faq-more" id="faq-what-input-formats-does-dinky-support">
-        <h3 class="faq-q">What input formats does Dinky support?</h3>
-        <p class="faq-a">Images: JPG, PNG, WebP, AVIF, HEIC/HEIF, TIFF, BMP → WebP, AVIF, lossless PNG, or HEIC. Audio: AAC (M4A), ALAC, WAV, AIFF, FLAC, MP3 — cross‑convert via macOS <code>afconvert</code>, with bundled LAME for MP3 encode. Video: MP4/MOV → MP4 (H.264 or HEVC); optional FPS cap. PDFs: flatten, preserve, target size; scan-like PDFs can get OCR for search first.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-what-input-formats-does-dinky-support"><summary class="faq-q">What input formats does Dinky support?</summary><p class="faq-a">Images: JPG, PNG, WebP, AVIF, HEIC/HEIF, TIFF, BMP → WebP, AVIF, lossless PNG, or HEIC. Audio: AAC (M4A), ALAC, WAV, AIFF, FLAC, MP3 — cross‑convert via macOS <code>afconvert</code>, with bundled LAME for MP3 encode. Video: MP4/MOV → MP4 (H.264 or HEVC); optional FPS cap. PDFs: flatten, preserve, target size; scan-like PDFs can get OCR for search first.</p></details>
 
-      <div class="faq-item faq-more" id="faq-what-are-presets">
-        <h3 class="faq-q">What are presets?</h3>
-        <p class="faq-a">Saved settings (format, quality, destination, etc.) — one click from the sidebar. Create them in Settings → Presets.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-what-are-presets"><summary class="faq-q">What are presets?</summary><p class="faq-a">Saved settings (format, quality, destination, etc.) — one click from the sidebar. Create them in Settings → Presets.</p></details>
 
-      <div class="faq-item faq-more" id="faq-watch-folder">
-        <h3 class="faq-q">Can Dinky compress files automatically?</h3>
-        <p class="faq-a">Yes, with Watch Folder. Any supported file saved or moved into a watched folder is picked up and compressed — handy for Figma, Lightroom, or screenshot exports. You can watch a path inside Dropbox, Google Drive, iCloud Drive, or any other cloud folder that syncs to your Mac; Dinky reacts once the file is fully on disk (the sync app has to finish downloading first).</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-watch-folder"><summary class="faq-q">Can Dinky compress files automatically?</summary><p class="faq-a">Yes, with Watch Folder. Any supported file saved or moved into a watched folder is picked up and compressed — handy for Figma, Lightroom, or screenshot exports. You can watch a path inside Dropbox, Google Drive, iCloud Drive, or any other cloud folder that syncs to your Mac; Dinky reacts once the file is fully on disk (the sync app has to finish downloading first).</p></details>
 
-      <div class="faq-item faq-more" id="faq-can-dinky-compress-something-from-a-url">
-        <h3 class="faq-q">Can Dinky compress something from a URL?</h3>
-        <p class="faq-a">Yes. Drag a direct media link (<code>https://…/photo.jpg</code>, etc.) onto the window, or copy it and hit ⌘⇧V (Clipboard Compress). Direct file URLs only — not web pages.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-can-dinky-compress-something-from-a-url"><summary class="faq-q">Can Dinky compress something from a URL?</summary><p class="faq-a">Yes. Drag a direct media link (<code>https://…/photo.jpg</code>, etc.) onto the window, or copy it and hit ⌘⇧V (Clipboard Compress). Direct file URLs only — not web pages.</p></details>
 
-      <div class="faq-item faq-more" id="faq-can-i-share-a-url-s-compressed-version-straight-to-dropbox-o">
-        <h3 class="faq-q">Can I share a URL’s compressed version straight to Dropbox or Google Drive?</h3>
-        <p class="faq-a">Not directly. Set a preset’s destination to a cloud-synced folder (e.g. <code>~/Dropbox/Compressed/</code>) so outputs sync automatically. The same idea applies to Watch Folder: pick a watched path under your Dropbox (or Drive) folder for inputs, or a synced subfolder as the destination so compressed files upload with everything else.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-can-i-share-a-url-s-compressed-version-straight-to-dropbox-o"><summary class="faq-q">Can I share a URL’s compressed version straight to Dropbox or Google Drive?</summary><p class="faq-a">Not directly. Set a preset’s destination to a cloud-synced folder (e.g. <code>~/Dropbox/Compressed/</code>) so outputs sync automatically. The same idea applies to Watch Folder: pick a watched path under your Dropbox (or Drive) folder for inputs, or a synced subfolder as the destination so compressed files upload with everything else.</p></details>
 
-      <div class="faq-item faq-more" id="faq-what-if-dinky-can-t-hit-my-target-file-size">
-        <h3 class="faq-q">What if Dinky can’t hit my target file size?</h3>
-        <p class="faq-a">Dinky walks quality down as far as your preset allows to stay under the cap. If the file is still larger than your target at minimum quality, you’ve hit the practical floor for that source at its current pixel dimensions — Dinky returns the smallest output it could produce, not a magically smaller one.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-what-if-dinky-can-t-hit-my-target-file-size"><summary class="faq-q">What if Dinky can’t hit my target file size?</summary><p class="faq-a">Dinky walks quality down as far as your preset allows to stay under the cap. If the file is still larger than your target at minimum quality, you’ve hit the practical floor for that source at its current pixel dimensions — Dinky returns the smallest output it could produce, not a magically smaller one.</p></details>
 
-      <div class="faq-item faq-more" id="faq-what-changed-in-2-0">
-        <h3 class="faq-q">What changed in 2.0?</h3>
-        <p class="faq-a">The 1.x line (from 1.0) was images only. 2.0 added videos and PDFs alongside images. 2.10 added audio compression and an optional video FPS cap. Older 1.x DMGs and ZIPs stay on <a href="https://github.com/heyderekj/dinky/releases" target="_blank">GitHub Releases</a> for archival use.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-what-changed-in-2-0"><summary class="faq-q">What changed in 2.0?</summary><p class="faq-a">The 1.x line (from 1.0) was images only. 2.0 added videos and PDFs alongside images. 2.10 added audio compression and an optional video FPS cap. Older 1.x DMGs and ZIPs stay on <a href="https://github.com/heyderekj/dinky/releases" target="_blank">GitHub Releases</a> for archival use.</p></details>
 
-      <div class="faq-item faq-more" id="faq-who-made-this-and-why">
-        <h3 class="faq-q">Who made this and why?</h3>
-        <p class="faq-a"><a href="https://heyderekj.com" target="_blank">Derek Castelli</a> is a freelance web designer in Figma and Webflow. He made Dinky after Optimage crashed mid-project.</p>
-      </div>
+      <details class="faq-item faq-more" id="faq-who-made-this-and-why"><summary class="faq-q">Who made this and why?</summary><p class="faq-a"><a href="https://heyderekj.com" target="_blank">Derek Castelli</a> is a freelance web designer in Figma and Webflow. He made Dinky after Optimage crashed mid-project.</p></details>
     </div>
     <button type="button" class="faq-all" data-faq-all>Show all 16 questions</button>
 
