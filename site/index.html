@@ -376,6 +376,9 @@
     .g-scene { grid-area: 1 / 1; width: 100%; display: grid; place-items: center; opacity: 0; transform: translateY(10px) scale(0.985); transition: opacity 0.45s var(--ease), transform 0.5s var(--ease); }
     .g-scene.is-on { opacity: 1; transform: none; }
     .g-scene[hidden] { display: grid !important; visibility: hidden; }
+    /* A scene that isn't showing must not catch clicks: its file list sets its own visibility, which beats the hidden parent's. */
+    .g-scene:not(.is-on) { pointer-events: none; }
+    .g-scene[hidden] * { visibility: hidden !important; }
     .e-list { list-style: none; margin: 28px 0 0; padding: 0; }
     .e-list li { display: grid; grid-template-columns: 22px 1fr; gap: 14px; padding: 17px 0; border-top: 1px solid color-mix(in oklch, var(--ink) 10%, transparent); }
     .e-list li:last-child { border-bottom: 1px solid color-mix(in oklch, var(--ink) 10%, transparent); }
@@ -1516,7 +1519,7 @@
   </main>
 
   <footer class="foot wrap">
-    © <a href="https://testamentmade.com">Testament Made</a>, LLC · <a href="mailto:derek@testamentmade.com">derek@testamentmade.com</a>
+    © 2026 <a href="https://testamentmade.com">Testament Made, LLC</a> · <a href="mailto:derek@testamentmade.com">derek@testamentmade.com</a> · <a href="https://github.com/heyderekj/dinky">GitHub</a> · MIT License
   </footer>
 
   <script>
