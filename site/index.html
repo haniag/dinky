@@ -227,10 +227,10 @@
     }
 
     /* ---------- Hero ---------- */
-    .hero { padding: 112px 0 8px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .hero { padding: 86px 0 8px; text-align: center; display: flex; flex-direction: column; align-items: center; }
     /* Outer wrap: room for the glow + rotation. Inner stage: filter + wiggle on one element so
        iOS Safari doesn't promote separate layers (which showed as opaque rectangles behind the icon). */
-    .app-icon-wrap { padding: 18px 22px 22px; margin-bottom: 4px; }
+    .app-icon-wrap { padding: 18px 22px 7px; margin-bottom: 4px; }
     .app-icon-stage {
       display: inline-block; line-height: 0; transform-origin: 50% 85%;
       filter: drop-shadow(0 2px 3px rgb(20 10 80 / 0.18)) drop-shadow(0 22px 26px var(--glow));
@@ -689,7 +689,7 @@
       .cmp-writeups-specialists .cmp-writeups-grid { flex: none; width: 100%; min-width: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @media (max-width: 700px) {
-      .hero { padding-top: 96px; }
+      .hero { padding-top: 78px; }
       .app-icon { width: 104px; height: 104px; }
       .section { padding-top: 88px; scroll-margin-top: -12px; }
       .screenshots { margin-top: 48px; }
