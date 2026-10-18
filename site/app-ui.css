@@ -219,6 +219,8 @@
   -webkit-backdrop-filter: blur(22px) saturate(1.6); backdrop-filter: blur(22px) saturate(1.6);
   box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.08), 0 10px 30px -14px rgb(20 10 70 / 0.35);
 }
+/* The wide hero window keeps the files clear of the panel on its left. */
+.dk-wide .dk-list { padding-left: 284px; }
 .dk-side.is-clipped { -webkit-mask: linear-gradient(#000 calc(100% - 26px), transparent); mask: linear-gradient(#000 calc(100% - 26px), transparent); }
 .dk-side > section { padding: 10px 0; display: grid; gap: 10px; }
 .dk-h { display: flex; align-items: center; gap: 6px; padding-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--dk-2); }
