@@ -432,11 +432,22 @@
 
     /* Narrow three-column widths: keep the longest terminal line inside its tile. */
     @media (max-width: 1060px) and (min-width: 901px) { .b-tile--dark { padding-inline: 18px; } .b-term { font-size: 10.5px; padding-inline: 10px; } }
+    /* Tablet widths keep two columns (like Binky's grid); wide tiles stack their art under the words. */
     @media (max-width: 900px) {
-      .b-grid { grid-template-columns: minmax(0, 1fr); }
-      .b-tile--wide, .b-tile--row { grid-column: auto; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+      .b-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .b-tile--wide, .b-tile--row { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr); gap: 6px; }
       .b-tile--wide > .b-art, .b-tile--row > .b-art { margin-top: 14px; }
       .b-langs { justify-content: flex-start; max-width: none; }
+    }
+    @media (min-width: 700px) and (max-width: 900px) {
+      .b-tile--wide:not(.b-tile--row) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+      .b-tile--wide:not(.b-tile--row) > .b-art { margin-top: 0; }
+      /* An odd tile out before the full-width row fills its line instead of leaving a gap. */
+      .b-tile--pair-last { grid-column: 1 / -1; }
+    }
+    @media (max-width: 560px) {
+      .b-grid { grid-template-columns: minmax(0, 1fr); }
+      .b-tile--wide, .b-tile--row { grid-column: auto; }
     }
 
     /* ---------- The download strip (as on slinkyfiles.com) ---------- */
@@ -1119,7 +1130,7 @@
     <b>"savingsPercent"</b>: 81.6
   }] }</pre>
       </div>
-      <div class="b-tile"><!-- power --><svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.25a.75.75 0 0 1 .75.75v9a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.382 5.968a.75.75 0 0 1-.139 1.05 7.5 7.5 0 1 0 9.514 0 .75.75 0 1 1 .91-1.192A9 9 0 1 1 6.332 5.83a.75.75 0 0 1 1.05.139Z" clip-rule="evenodd"/></svg><h3>Launch at login</h3><p>Opt in once and Dinky's ready the moment you log in — handy alongside Watch Folders for set-and-forget compression.</p></div>
+      <div class="b-tile b-tile--pair-last"><!-- power --><svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.25a.75.75 0 0 1 .75.75v9a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.382 5.968a.75.75 0 0 1-.139 1.05 7.5 7.5 0 1 0 9.514 0 .75.75 0 1 1 .91-1.192A9 9 0 1 1 6.332 5.83a.75.75 0 0 1 1.05.139Z" clip-rule="evenodd"/></svg><h3>Launch at login</h3><p>Opt in once and Dinky's ready the moment you log in — handy alongside Watch Folders for set-and-forget compression.</p></div>
       <div class="b-tile b-tile--wide b-tile--row"><!-- language --><svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M9 2.25a.75.75 0 0 1 .75.75v1.506a49.384 49.384 0 0 1 5.343.371.75.75 0 1 1-.186 1.489c-.66-.083-1.323-.151-1.99-.206a18.67 18.67 0 0 1-2.97 6.323c.317.384.65.753.998 1.107a.75.75 0 1 1-1.07 1.052A18.902 18.902 0 0 1 9 13.687a18.823 18.823 0 0 1-5.656 4.482.75.75 0 1 1-.688-1.333 17.323 17.323 0 0 0 5.396-4.353A18.72 18.72 0 0 1 5.89 8.598a.75.75 0 0 1 1.388-.568A17.21 17.21 0 0 0 9 11.224a17.17 17.17 0 0 0 2.391-5.165 48.038 48.038 0 0 0-8.298.307.75.75 0 0 1-.186-1.489 49.159 49.159 0 0 1 5.343-.371V3A.75.75 0 0 1 9 2.25ZM15.75 9a.75.75 0 0 1 .68.433l5.25 11.25a.75.75 0 1 1-1.36.634l-1.198-2.567h-6.744l-1.198 2.567a.75.75 0 0 1-1.36-.634l5.25-11.25A.75.75 0 0 1 15.75 9Zm-2.672 8.25h5.344l-2.672-5.726-2.672 5.726Z" clip-rule="evenodd"/></svg><div><h3>Supports 13 languages</h3><p>Functional UI follows your Mac into English, Spanish, French, Italian, German, Japanese, Korean, Dutch, Portuguese, Russian, Turkish, Simplified, and Traditional Chinese.</p></div><div class="b-art b-langs" aria-hidden="true"><span>English</span><span>Español</span><span>Français</span><span>Deutsch</span><span>日本語</span><span>한국어</span><span>简体中文</span><span>+6 more</span></div></div>
     </div>
   </section>
