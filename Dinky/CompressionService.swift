@@ -18,7 +18,7 @@ struct CompressionResult {
     /// Duration in seconds when the job was audio (or reuse for display).
     var audioDurationSeconds: Double? = nil
     var usedFirstFrameOnly: Bool = false
-    /// Set when an image was downscaled to fit a width limit.
+    /// Set when an image was resized by the percentage scale or width limit.
     var imageResize: ImageResizeInfo? = nil
     /// Where an image encoded to a temp file belongs (the source's own path) if it's kept.
     var stagedDestinationURL: URL? = nil

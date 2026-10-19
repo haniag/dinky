@@ -205,7 +205,7 @@ struct BatchCompletionSummarySheet: View {
                     SummaryStatRow(
                         icon: "arrow.down.right.and.arrow.up.left",
                         text: String.localizedStringWithFormat(
-                            String(localized: "%lld resized to fit the width limit", comment: "Batch summary; argument is the number of images downscaled to the width limit."),
+                            String(localized: "%lld resized", comment: "Batch summary; argument is the number of images resized by the scale or width limit."),
                             Int64(resizedCount(summary))
                         )
                     )
