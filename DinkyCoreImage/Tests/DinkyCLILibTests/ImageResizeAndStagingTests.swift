@@ -43,6 +43,37 @@ final class ImageResizeAndStagingTests: XCTestCase {
         XCTAssertNil(r.resize)
     }
 
+    func testPercentScaleResizesBothAxes() async throws {
+        let src = try writePNG(named: "scaled", width: 400, height: 200)
+        let out = workDir.appendingPathComponent("scaled-out.webp")
+        let r = try await compress(src, format: .webp, output: out, goals: CompressionGoals(scale: ImageScalePercent(width: 50, height: 25)))
+        XCTAssertEqual(r.resize, ImageResizeInfo(originalWidth: 400, originalHeight: 200, outputWidth: 200, outputHeight: 50))
+        XCTAssertEqual(try pixelSize(r.outputURL), CGSize(width: 200, height: 50))
+    }
+
+    func testPercentScaleCanEnlarge() async throws {
+        let src = try writePNG(named: "small", width: 100, height: 60)
+        let out = workDir.appendingPathComponent("small-out.png")
+        let r = try await compress(src, format: .png, output: out, goals: CompressionGoals(scale: ImageScalePercent(uniform: 150)))
+        XCTAssertEqual(try pixelSize(r.outputURL), CGSize(width: 150, height: 90))
+    }
+
+    func testMaxWidthCapsScaledImage() async throws {
+        let src = try writePNG(named: "capped", width: 4000, height: 2000)
+        let out = workDir.appendingPathComponent("capped-out.webp")
+        let goals = CompressionGoals(maxWidth: 1000, scale: ImageScalePercent(width: 50, height: 100))
+        let r = try await compress(src, format: .webp, output: out, goals: goals)
+        // 50% × 100% → 2000×2000, then the width cap keeps that square shape at 1000×1000.
+        XCTAssertEqual(try pixelSize(r.outputURL), CGSize(width: 1000, height: 1000))
+    }
+
+    func testFullScaleIsNotResized() async throws {
+        let src = try writePNG(named: "full", width: 300, height: 300)
+        let out = workDir.appendingPathComponent("full-out.webp")
+        let r = try await compress(src, format: .webp, output: out, goals: CompressionGoals(scale: ImageScalePercent(uniform: 100)))
+        XCTAssertNil(r.resize)
+    }
+
     /// Replace original with the same format: the source must be byte-identical afterwards and the
     /// result staged elsewhere, so a "no gain" result can be thrown away safely.
     func testOutputOverSourceIsStaged() async throws {
@@ -59,10 +90,14 @@ final class ImageResizeAndStagingTests: XCTestCase {
     // MARK: - Helpers
 
     private func compress(_ source: URL, format: CompressionFormat, output: URL, maxWidth: Int?) async throws -> DinkyImageCompressionResult {
+        try await compress(source, format: format, output: output, goals: CompressionGoals(maxWidth: maxWidth))
+    }
+
+    private func compress(_ source: URL, format: CompressionFormat, output: URL, goals: CompressionGoals) async throws -> DinkyImageCompressionResult {
         try await DinkyImageCompression(binDirectory: bin).compress(
             source: source,
             format: format,
-            goals: CompressionGoals(maxWidth: maxWidth),
+            goals: goals,
             stripMetadata: true,
             outputURL: output,
             parallelCompressionLimit: 1

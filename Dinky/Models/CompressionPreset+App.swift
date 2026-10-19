@@ -11,6 +11,9 @@ extension CompressionPreset {
             autoFormat: prefs.autoFormat,
             maxWidthEnabled: prefs.maxWidthEnabled,
             maxWidth: prefs.maxWidth,
+            resizePercentEnabled: prefs.resizePercentEnabled,
+            resizeWidthPercent: prefs.resizeWidthPercent,
+            resizeHeightPercent: prefs.resizeHeightPercent,
             maxFileSizeEnabled: prefs.maxFileSizeEnabled,
             maxFileSizeKB: prefs.maxFileSizeKB,
             saveLocationRaw: "sameFolder",
@@ -62,6 +65,10 @@ extension CompressionPreset {
         prefs.autoFormat = autoFormat
         prefs.maxWidthEnabled = maxWidthEnabled
         prefs.maxWidth = maxWidth
+        prefs.resizePercentEnabled = resizePercentEnabled
+        prefs.resizeWidthPercent = resizeWidthPercent
+        prefs.resizeHeightPercent = resizeHeightPercent
+        prefs.resizePercentLinked = resizeWidthPercent == resizeHeightPercent
         prefs.maxFileSizeEnabled = maxFileSizeEnabled
         prefs.maxFileSizeKB = maxFileSizeKB
         prefs.saveLocationRaw = saveLocationRaw
@@ -101,6 +108,14 @@ extension CompressionPreset {
         prefs.audioQualityTierRaw = audioQualityTierRaw
         prefs.pdfEnableOCR = pdfEnableOCR
         prefs.pdfOCRLanguages = pdfOCRLanguages
+    }
+
+    /// `50%` when both axes match, otherwise `W 50% × H 75%`.
+    var resizePercentSummary: String {
+        if resizeWidthPercent == resizeHeightPercent {
+            return String(localized: "\(resizeWidthPercent)%", comment: "Preset summary: uniform percentage resize.")
+        }
+        return String(localized: "W \(resizeWidthPercent)% × H \(resizeHeightPercent)%", comment: "Preset summary: per-axis percentage resize (width, height).")
     }
 
     /// Finder-style unique name among existing presets: `Name copy`, `Name copy 2`, …

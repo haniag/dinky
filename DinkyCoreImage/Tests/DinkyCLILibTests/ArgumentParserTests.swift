@@ -1,4 +1,5 @@
 import DinkyCLILib
+import DinkyCoreImage
 import XCTest
 
 final class ArgumentParserTests: XCTestCase {
@@ -32,6 +33,27 @@ final class ArgumentParserTests: XCTestCase {
         XCTAssertTrue(o.stripMetadata)
         XCTAssertEqual(r.paths, ["in.png"])
         XCTAssertTrue(r.explicit.contains("quality"))
+    }
+
+    func testScaleFlagSetsBothAxes() throws {
+        let r = try DinkyCompressArgParser.parse(["--scale", "50%", "in.png"])
+        XCTAssertEqual(r.options.scale, ImageScalePercent(width: 50, height: 50))
+        XCTAssertTrue(r.explicit.contains("scale"))
+    }
+
+    func testPerAxisScaleFlags() throws {
+        let r = try DinkyCompressArgParser.parse(["--scale-width", "25", "--scale-height", "80", "in.png"])
+        XCTAssertEqual(r.options.scale, ImageScalePercent(width: 25, height: 80))
+    }
+
+    func testSingleAxisScaleKeepsProportions() throws {
+        let r = try DinkyCompressArgParser.parse(["--scale-height", "40", "in.png"])
+        XCTAssertEqual(r.options.scale, ImageScalePercent(width: 40, height: 40))
+    }
+
+    func testScaleOutOfRangeThrows() {
+        XCTAssertThrowsError(try DinkyCompressArgParser.parse(["--scale", "0", "in.png"]))
+        XCTAssertThrowsError(try DinkyCompressArgParser.parse(["--scale-width", "401", "in.png"]))
     }
 
     func testHelpThrows() {
