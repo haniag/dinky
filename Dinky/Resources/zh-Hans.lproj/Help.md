@@ -182,6 +182,6 @@ WebP 和 AVIF 绝对优于 JPEG — 相同的视觉质量、更小的文件，�
 
 - 网站：[dinkyfiles.com](https://dinkyfiles.com)
 - 代码和问题：[github.com/heyderekj/dinky](https://github.com/heyderekj/dinky)
-- 电子邮件：[help@dinkyfiles.com](mailto:help@dinkyfiles.com)
+- 电子邮件：[derek@testamentmade.com](mailto:derek@testamentmade.com)
 
 由德里克·卡斯泰利建造。欢迎提出建议、错误和“它还能做吗……”。

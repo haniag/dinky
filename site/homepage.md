@@ -6,7 +6,7 @@ A tiny macOS app that shrinks images, videos, audio, and PDFs. Drag, drop, get s
 
 - **Download:** [Dinky for macOS (DMG)](https://github.com/heyderekj/dinky/releases/download/v2.15.0/Dinky-2.15.0.dmg) — or install with [Homebrew](https://brew.sh): `brew tap heyderekj/dinky https://github.com/heyderekj/dinky` then `brew install --cask dinky`
 - **Source:** [GitHub — heyderekj/dinky](https://github.com/heyderekj/dinky)
-- **Support:** [help@dinkyfiles.com](mailto:help@dinkyfiles.com)
+- **Support:** [derek@testamentmade.com](mailto:derek@testamentmade.com)
 - **Version:** 35 MB · v2.15.0 · Apple Silicon · macOS 15 Sequoia or later
 - **Note:** 1.x (from 1.0) was images only; **2.0** added videos and PDFs. **2.10** added audio compression and an optional video FPS cap. Older 1.x downloads stay on GitHub for archival use.
 

@@ -1,0 +1,454 @@
+/* ============================================================
+   Dinky's windows, rebuilt in HTML and CSS (no screenshots), the way slinkyfiles.com does it.
+   Everything here mirrors the SwiftUI source in Dinky/: ContentView (window, toolbar, bottom bar),
+   DropZoneView, SidebarView, ResultsRowView, ImagePreviewSheet and PreferencesView › Watch.
+   Sizes are the app's own points at 1:1. app-ui.js zooms each window to fit its desktop.
+   ============================================================ */
+
+.dk {
+  --dk-text: #1d1d1f;
+  --dk-2: rgb(60 60 67 / 0.66);      /* .secondary */
+  --dk-3: rgb(60 60 67 / 0.42);      /* .tertiary */
+  --dk-fill: rgb(0 0 0 / 0.07);      /* Color.primary.opacity(0.08) on glass */
+  --dk-fill-2: rgb(0 0 0 / 0.045);   /* SidebarCard / grouped rows */
+  --dk-sep: rgb(0 0 0 / 0.09);
+  --dk-accent: #007aff;
+  --dk-knock: #fff;
+  --dk-glass: rgb(250 249 255 / 0.5);
+  --dk-glass-bar: rgb(255 255 255 / 0.32);
+  --dk-panel: rgb(250 251 255 / 0.86);
+  --dk-control: rgb(255 255 255 / 0.62);
+  --dk-shadow: 0 0 0 0.5px rgb(20 10 70 / 0.16), 0 2px 6px rgb(20 10 70 / 0.08), 0 34px 60px -26px rgb(25 10 90 / 0.6);
+  --dk-rim: linear-gradient(140deg, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0.3) 30%, rgb(255 255 255 / 0.08) 62%, rgb(255 255 255 / 0.5));
+  /* dinkyGradient (SettingsChrome.swift) and the drop zone's gradient (DropZoneView.swift) */
+  --dk-grad: linear-gradient(90deg, rgb(64 140 255), rgb(115 77 242));
+  --dk-drop: linear-gradient(135deg, rgb(71 143 255), rgb(133 71 245));
+  --dk-progress: rgb(71 143 255);
+  --dk-font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
+  --dk-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  .dk {
+    --dk-text: #f5f5f7;
+    --dk-2: rgb(235 235 245 / 0.62);
+    --dk-3: rgb(235 235 245 / 0.34);
+    --dk-fill: rgb(255 255 255 / 0.09);
+    --dk-fill-2: rgb(255 255 255 / 0.05);
+    --dk-sep: rgb(255 255 255 / 0.09);
+    --dk-accent: #0a84ff;
+    --dk-knock: #fff;
+    --dk-glass: rgb(26 24 44 / 0.58);
+    --dk-glass-bar: rgb(0 0 0 / 0.16);
+    --dk-panel: rgb(48 45 74 / 0.84);
+    --dk-control: rgb(255 255 255 / 0.12);
+    --dk-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.6), 0 2px 6px rgb(0 0 0 / 0.2), 0 34px 60px -26px rgb(0 0 0 / 0.8);
+    --dk-rim: linear-gradient(140deg, rgb(255 255 255 / 0.34), rgb(255 255 255 / 0.1) 30%, rgb(255 255 255 / 0.03) 62%, rgb(255 255 255 / 0.18));
+  }
+}
+
+/* The window sits centred on its desktop; app-ui.js sets zoom so it always fits. */
+.dk-fit { width: 100%; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.dk-win {
+  --w: 440px; --h: 470px; --r: 24px;
+  position: relative; flex: none; width: var(--w); height: var(--h); border-radius: var(--r);
+  display: flex; flex-direction: column; overflow: hidden; isolation: isolate; text-align: left;
+  font-family: var(--dk-font); font-size: 13px; line-height: 1.3; letter-spacing: -0.003em; color: var(--dk-text);
+  -webkit-font-smoothing: antialiased; -webkit-user-select: none; user-select: none; cursor: default;
+  background: var(--dk-glass);
+  -webkit-backdrop-filter: blur(34px) saturate(1.8); backdrop-filter: blur(34px) saturate(1.8);
+  box-shadow: var(--dk-shadow);
+}
+/* Tahoe's specular rim: bright top left, fading round the sides, catching again bottom right. */
+.dk-win::after {
+  content: ''; position: absolute; inset: 0; z-index: 20; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: var(--dk-rim);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+@media (max-width: 640px) { .dk-win { zoom: 0.68; } } /* no-JS fallback; app-ui.js fits exactly */
+
+.dk-i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+
+/* ---------- Title bar: traffic lights, the sidebar button in a glass circle, the title ---------- */
+.dk-tb { position: relative; z-index: 6; flex: none; display: flex; align-items: center; gap: 0; height: 56px; padding: 0 14px 0 18px; }
+.dk-lights { display: flex; gap: 9px; margin-right: 18px; }
+.dk-lights i { width: 14px; height: 14px; border-radius: 50%; background: #ff5f57; box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.14); }
+.dk-lights i:nth-child(2) { background: #febc2e; }
+.dk-lights i:nth-child(3) { background: #28c840; }
+.dk-tbtn {
+  position: relative; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%;
+  color: var(--dk-text); background: var(--dk-control);
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.08), 0 4px 12px -4px rgb(20 10 70 / 0.25);
+}
+.dk-tbtn::after { content: ''; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7), inset 0 0 0 0.5px rgb(255 255 255 / 0.4); }
+.dk-tbtn .dk-i { width: 19px; height: 19px; stroke-width: 1.6; }
+.dk-title { margin-left: 13px; font-size: 16px; font-weight: 700; letter-spacing: -0.012em; }
+@media (prefers-color-scheme: dark) {
+  .dk-tbtn::after { box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), inset 0 0 0 0.5px rgb(255 255 255 / 0.08); }
+}
+
+/* ---------- Body and the glass bottom bar ---------- */
+.dk-body { position: relative; flex: 1; min-height: 0; }
+.dk-bar {
+  position: relative; z-index: 4; flex: none; display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 10px 16px;
+  font-size: 11px; color: var(--dk-2); background: var(--dk-glass-bar); box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.55), 0 -0.5px 0 var(--dk-sep);
+}
+.dk-bar__status { flex: 1; min-width: 0; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dk-bar.is-center .dk-bar__status { text-align: center; }
+.dk-bar__btn { flex: none; color: var(--dk-2); }
+@media (prefers-color-scheme: dark) { .dk-bar { box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.1), 0 -0.5px 0 rgb(0 0 0 / 0.3); } }
+
+/* ---------- Drop zone (DropZoneView) ---------- */
+.dk-drop { position: absolute; inset: 0; display: grid; place-items: center; }
+.dk-drop__idle { position: absolute; inset: 0; display: grid; place-items: center; transition: opacity 0.3s ease; }
+.dk-drop__idle-label { display: grid; justify-items: center; gap: 5px; margin-top: 30px; text-align: center; }
+.dk-drop__idle-label b { font-size: 15px; font-weight: 400; }
+.dk-drop__idle-label span { font-size: 10px; color: var(--dk-2); }
+.dk-drop__idle-label span + span { color: var(--dk-3); }
+.dk-stack { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+.dk-card {
+  position: absolute; left: -27px; top: -37px; width: 54px; height: 74px; border-radius: 7px; display: grid; place-items: center;
+  background: #fff; box-shadow: 0 0 0 1px rgb(0 0 0 / 0.09), 0 3px 6px rgb(0 0 0 / 0.12);
+}
+.dk-card .dk-i { width: 24px; height: 24px; stroke-width: 1.6; }
+.dk-card b { position: absolute; bottom: 9px; font-size: 7px; font-weight: 700; letter-spacing: 0.04em; color: rgb(0 0 0 / 0.45); }
+.dk-card--pdf { translate: 30px -82px; rotate: 8deg; color: #e5484d; }
+.dk-card--audio { translate: 10px -82px; rotate: 3deg; color: #e8458b; }
+.dk-card--video { translate: -10px -82px; color: #8c48f0; }
+.dk-card--image { translate: -30px -82px; rotate: -7deg; color: #3b82f6; }
+@media (prefers-color-scheme: dark) { .dk-card { background: #2b2a33; box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1), 0 5px 10px rgb(0 0 0 / 0.38); } .dk-card b { color: rgb(255 255 255 / 0.5); } }
+
+/* Hovering: rings, the gradient disc with a bouncing arrow, and the "Release to compress" capsule */
+.dk-drop__hover { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 18px; opacity: 0; transition: opacity 0.25s ease; }
+.dk-target { position: relative; width: 144px; height: 144px; display: grid; place-items: center; }
+.dk-target i { position: absolute; border-radius: 50%; border: 1.5px solid color-mix(in srgb, var(--dk-accent) 18%, transparent); width: 144px; height: 144px; }
+.dk-target i + i { width: 110px; height: 110px; border-color: color-mix(in srgb, var(--dk-accent) 28%, transparent); }
+.dk-target i { animation: dk-ring 1.3s ease-in-out infinite alternate; }
+.dk-disc { position: relative; width: 80px; height: 80px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: var(--dk-drop); box-shadow: 0 6px 18px color-mix(in srgb, var(--dk-accent) 45%, transparent); }
+.dk-disc .dk-i { width: 30px; height: 30px; stroke-width: 2.8; animation: dk-bounce 1.55s ease-in-out infinite; }
+.dk-release { padding: 8px 18px; border-radius: 999px; color: #fff; font-size: 15px; font-weight: 600; background: linear-gradient(90deg, rgb(71 143 255), rgb(133 71 245)); box-shadow: 0 4px 12px color-mix(in srgb, var(--dk-accent) 40%, transparent); white-space: nowrap; }
+@keyframes dk-ring { to { scale: 1.12; opacity: 0.25; } }
+@keyframes dk-bounce { 0%, 55%, 100% { translate: 0 0; } 25% { translate: 0 5px; } 40% { translate: 0 -2px; } }
+
+/* The files being dragged in (a Finder drag image: thumbnails, a count badge, a highlighted name) */
+.dk-drag { position: absolute; z-index: 8; left: 298px; top: 132px; display: grid; justify-items: center; gap: 6px; pointer-events: none; }
+.dk-drag__pile { position: relative; width: 62px; height: 62px; }
+.dk-drag__pile span { position: absolute; inset: 4px 2px; border-radius: 4px; background: #fff; box-shadow: 0 1px 4px rgb(0 0 0 / 0.25); }
+.dk-drag__pile span:nth-child(1) { rotate: -9deg; translate: -4px 2px; background: linear-gradient(#fff, #fff) padding-box, #fff; }
+.dk-drag__pile span:nth-child(1)::before, .dk-drag__pile span:nth-child(2)::before { content: ''; position: absolute; inset: 9px 8px; background: repeating-linear-gradient(rgb(0 0 0 / 0.16) 0 1.5px, transparent 1.5px 5px); }
+.dk-drag__pile span:nth-child(2) { rotate: 6deg; translate: 4px 0; }
+.dk-drag__pile span:nth-child(3) { inset: 2px 0 6px; border: 2.5px solid #fff; background: radial-gradient(60% 50% at 30% 100%, #ffd6b8, #ef8fbd 35%, transparent 70%), linear-gradient(#1b1350, #4c2a8c 60%, #8f4fb3); }
+.dk-drag__badge { position: absolute; top: -7px; left: -7px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; display: grid; place-items: center; font-size: 12px; font-weight: 700; color: #fff; background: #ff3b30; box-shadow: 0 0 0 1.5px #fff; }
+.dk-drag__name { padding: 1px 5px; border-radius: 4px; font-size: 12px; font-weight: 600; color: #fff; background: #0a5ad6; white-space: nowrap; }
+.dk-drag { transition: translate 0.9s cubic-bezier(0.3, 0.7, 0.3, 1), opacity 0.3s ease, scale 0.3s ease; }
+
+/* ---------- Results list (ContentView.resultsList + ResultsRowView) ---------- */
+.dk-list { position: absolute; inset: 0; padding: 0 6px; overflow: hidden; }
+.dk-row {
+  position: relative; display: flex; align-items: center; gap: 12px; min-height: 42px; padding: 9px 14px;
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.07); border-radius: 0; outline: none;
+}
+.dk-row:last-child { box-shadow: none; }
+@media (prefers-color-scheme: dark) { .dk-row { box-shadow: 0 1px 0 rgb(255 255 255 / 0.08); } }
+.dk-row__main { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+.dk-chip {
+  flex: none; padding: 1.5px 5px; border-radius: 4px; font-size: 9px; font-weight: 600; text-transform: lowercase; font-variant-caps: small-caps; letter-spacing: 0.02em;
+  color: var(--dk-2); background: var(--dk-fill);
+}
+.dk-row__title { min-width: 0; display: grid; gap: 1px; }
+.dk-row__name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dk-row__out { font: 9px var(--dk-mono); color: var(--dk-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dk-size { flex: none; display: flex; align-items: center; gap: 5px; font: 10px var(--dk-mono); color: var(--dk-2); white-space: nowrap; }
+.dk-size .dk-i { width: 9px; height: 9px; stroke-width: 2; }
+.dk-size b { font-weight: 600; }
+.dk-size--plain { color: var(--dk-3); }
+.dk-status { flex: none; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.dk-pill { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 500; color: var(--dk-text); background: var(--dk-fill); }
+.dk-pill--eye { padding: 3px 7px; }
+.dk-pill--eye .dk-i { width: 13px; height: 13px; stroke-width: 1.8; }
+.dk-pill--queued { background: color-mix(in srgb, var(--dk-2) 32%, transparent); }
+.dk-prog { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--dk-2); font-variant-numeric: tabular-nums; }
+.dk-prog .dk-i { width: 12px; height: 12px; stroke-width: 2.1; color: var(--dk-progress); animation: dk-spin 1s linear infinite; }
+.dk-prog__bar { position: relative; width: 38px; height: 4px; border-radius: 99px; background: var(--dk-fill); overflow: hidden; }
+.dk-prog__bar i { position: absolute; inset: 0 auto 0 0; width: calc(var(--p, 0) * 100%); border-radius: inherit; background: var(--dk-progress); }
+.dk-prog__pct { min-width: 26px; color: var(--dk-text); }
+@keyframes dk-spin { to { rotate: 360deg; } }
+/* Rows switch between queued / working / done through data-state */
+.dk-row [data-show] { display: none; }
+.dk-row[data-state='queued'] [data-show~='queued'], .dk-row[data-state='working'] [data-show~='working'], .dk-row[data-state='done'] [data-show~='done'] { display: flex; }
+.dk-row[data-state='queued'] .dk-row__out[data-show~='queued'] { display: block; }
+.dk-row.is-in { animation: dk-row-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes dk-row-in { from { opacity: 0; translate: 0 6px; } }
+
+/* Queued rows open the right-click menu */
+.dk-row--menu { cursor: context-menu; border-radius: 8px; }
+@media (hover: hover) { .dk-row--menu:hover { background: var(--dk-fill-2); } }
+.dk-row--menu:focus-visible { box-shadow: inset 0 0 0 2px var(--dk-accent); }
+.dk-row--menu[aria-expanded='true'] { background: color-mix(in srgb, var(--dk-accent) 14%, transparent); }
+
+/* ---------- Context menu (Tahoe: glass, rounded, icons, accent highlight) ---------- */
+.dk-menu {
+  position: absolute; z-index: 30; min-width: 196px; padding: 5px; border-radius: 13px; font-size: 13px;
+  background: rgb(246 245 250 / 0.82); -webkit-backdrop-filter: blur(24px) saturate(1.8); backdrop-filter: blur(24px) saturate(1.8);
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.16), 0 12px 32px -6px rgb(20 10 70 / 0.38);
+  transform-origin: top left; animation: dk-menu-in 0.14s ease-out;
+}
+.dk-menu[hidden] { display: none; }
+@keyframes dk-menu-in { from { opacity: 0; scale: 0.97; } }
+.dk-menu button {
+  all: unset; box-sizing: border-box; position: relative; display: flex; align-items: center; gap: 8px; width: 100%; height: 24px; padding: 0 10px 0 8px;
+  border-radius: 7px; font: 13px var(--dk-font); color: var(--dk-text); cursor: default; white-space: nowrap;
+}
+.dk-menu button .dk-i { width: 15px; height: 15px; stroke-width: 1.6; color: var(--dk-text); }
+.dk-menu button .dk-menu__more { margin-left: auto; width: 11px; height: 11px; stroke-width: 2.2; color: var(--dk-2); }
+.dk-menu button:hover, .dk-menu button:focus-visible, .dk-menu button[aria-expanded='true'] { background: var(--dk-accent); color: #fff; outline: none; }
+.dk-menu button:hover .dk-i, .dk-menu button:focus-visible .dk-i, .dk-menu button[aria-expanded='true'] .dk-i { color: #fff; }
+.dk-menu .is-destructive, .dk-menu .is-destructive .dk-i { color: #e5342b; }
+.dk-menu hr { height: 1px; margin: 5px 10px; border: 0; background: rgb(0 0 0 / 0.1); }
+.dk-menu .dk-menu { top: -5px; left: calc(100% - 4px); min-width: 120px; }
+@media (prefers-color-scheme: dark) {
+  .dk-menu { background: rgb(40 38 52 / 0.84); box-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.14), 0 12px 32px -6px rgb(0 0 0 / 0.6); }
+  .dk-menu .is-destructive, .dk-menu .is-destructive .dk-i { color: #ff6961; }
+  .dk-menu hr { background: rgb(255 255 255 / 0.12); }
+}
+
+/* ---------- The sidebar panel (SidebarView): glass, 260pt wide, floating inside the window ---------- */
+.dk-side {
+  position: absolute; z-index: 5; top: 0; left: 12px; width: 260px; max-height: calc(100% - 12px); overflow: hidden;
+  padding: 12px; border-radius: 16px; background: var(--dk-panel);
+  -webkit-backdrop-filter: blur(22px) saturate(1.6); backdrop-filter: blur(22px) saturate(1.6);
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.08), 0 10px 30px -14px rgb(20 10 70 / 0.35);
+}
+/* The wide hero window keeps the files clear of the panel on its left. */
+.dk-wide .dk-list { padding-left: 284px; }
+.dk-side.is-clipped { -webkit-mask: linear-gradient(#000 calc(100% - 26px), transparent); mask: linear-gradient(#000 calc(100% - 26px), transparent); }
+.dk-side > section { padding: 10px 0; display: grid; gap: 10px; }
+.dk-h { display: flex; align-items: center; gap: 6px; padding-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--dk-2); }
+.dk-h .dk-i { width: 17px; height: 17px; stroke-width: 1.6; }
+.dk-h .dk-chev { margin-left: auto; width: 10px; height: 10px; stroke-width: 2.4; color: var(--dk-3); }
+.dk-help { font-size: 10px; line-height: 1.32; color: var(--dk-3); }
+.dk-check { display: flex; align-items: center; gap: 7px; font-size: 11px; }
+.dk-check__box { width: 14px; height: 14px; border-radius: 4px; display: grid; place-items: center; color: #fff; background: var(--dk-accent); box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.1); }
+.dk-check__box .dk-i { width: 10px; height: 10px; stroke-width: 3; }
+.dk-scopes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.dk-scopes span { height: 34px; border-radius: 8px; display: grid; place-items: center; color: var(--dk-2); background: var(--dk-fill); }
+.dk-scopes span .dk-i { width: 17px; height: 17px; stroke-width: 1.6; }
+.dk-scopes span.is-on { color: #fff; background: var(--dk-grad); }
+.dk-chips { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+.dk-chips > * {
+  all: unset; box-sizing: border-box; padding: 5px 0; border-radius: 6px; text-align: center; font: 11px var(--dk-font);
+  color: var(--dk-2); background: var(--dk-fill); cursor: default;
+}
+.dk-chips > [aria-checked='true'], .dk-chips > .is-on { font-weight: 600; color: #fff; background: var(--dk-grad); }
+.dk-chips > button:focus-visible { outline: 2px solid var(--dk-accent); outline-offset: 1px; }
+.dk-chips--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dk-div { height: 1px; margin: 4px 0; background: var(--dk-sep); }
+.dk-switch { position: relative; flex: none; width: 26px; height: 15px; border-radius: 99px; background: var(--dk-fill); box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.06); }
+.dk-switch::after { content: ''; position: absolute; top: 1.5px; left: 1.5px; width: 19px; height: 12px; border-radius: 99px; background: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / 0.25); }
+.dk-switch.is-on { background: var(--dk-accent); }
+.dk-switch.is-on::after { left: auto; right: 1.5px; }
+.dk-swrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 11px; }
+
+/* Presets section + preset summary */
+.dk-preset { display: flex; align-items: center; gap: 6px; padding: 5px 7px; border-radius: 6px; }
+.dk-preset .dk-i { width: 15px; height: 15px; color: rgb(0 0 0 / 0.25); stroke-width: 1.5; }
+.dk-preset b { font-size: 12px; font-weight: 500; }
+.dk-preset small { margin-left: auto; font-size: 10px; color: var(--dk-2); }
+.dk-preset.is-on { background: color-mix(in srgb, var(--dk-accent) 8%, transparent); }
+.dk-preset.is-on .dk-i { color: var(--dk-accent); }
+@media (prefers-color-scheme: dark) { .dk-preset .dk-i { color: rgb(255 255 255 / 0.28); } }
+.dk-link { display: flex; align-items: center; gap: 6px; padding: 1px 0; font-size: 11px; font-weight: 500; color: var(--dk-accent); }
+.dk-link .dk-i { width: 14px; height: 14px; }
+.dk-link .dk-chev { margin-left: auto; width: 10px; height: 10px; stroke-width: 2.4; color: var(--dk-3); }
+.dk-actions { display: flex; gap: 12px; }
+.dk-actions span { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--dk-accent); }
+.dk-actions .dk-i { width: 14px; height: 14px; }
+.dk-sumcard { display: grid; gap: 8px; padding: 12px; border-radius: 10px; background: var(--dk-fill-2); }
+.dk-sum { display: flex; align-items: center; gap: 8px; font-size: 12px; color: color-mix(in srgb, var(--dk-text) 85%, transparent); }
+.dk-sum .dk-i, .dk-sum .dk-abc { width: 18px; height: 16px; color: color-mix(in srgb, var(--dk-accent) 85%, transparent); stroke-width: 1.6; }
+.dk-abc { display: grid; place-items: center; font-size: 12px; font-weight: 500; letter-spacing: -0.03em; }
+
+/* ---------- Preferences window (PreferencesView › Watch) ---------- */
+.dk-prefs { flex-direction: row; padding: 8px; gap: 0; }
+.dk-prefs__side {
+  position: relative; flex: none; width: 196px; display: flex; flex-direction: column; gap: 1px; padding: 0 8px 10px; border-radius: 16px;
+  background: var(--dk-panel); box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.08), 0 8px 24px -14px rgb(20 10 70 / 0.35);
+}
+/* As tall as the toolbar beside it (48px), so the lights and the title share a middle. */
+.dk-prefs__side .dk-lights { height: 48px; display: flex; align-items: center; padding: 0 6px; margin: 0; flex: none; }
+.dk-prefs__sec { padding: 10px 8px 3px; font-size: 11px; font-weight: 600; color: var(--dk-3); }
+.dk-prefs__item { display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 8px; border-radius: 8px; font-size: 13px; }
+.dk-prefs__item .dk-i { width: 17px; height: 17px; stroke-width: 1.5; color: var(--dk-2); }
+.dk-prefs__item.is-on { color: #fff; background: var(--dk-accent); }
+.dk-prefs__item.is-on .dk-i { color: #fff; }
+.dk-prefs__main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.dk-prefs__tb { flex: none; display: flex; align-items: center; gap: 14px; height: 48px; padding: 0 12px; }
+.dk-nav { display: flex; align-items: center; height: 34px; padding: 0 4px; border-radius: 999px; background: var(--dk-control); box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.08), 0 4px 12px -6px rgb(20 10 70 / 0.25); }
+.dk-nav span { width: 28px; display: grid; place-items: center; }
+.dk-nav .dk-i { width: 14px; height: 14px; stroke-width: 2.2; }
+.dk-nav span + span { color: var(--dk-3); }
+.dk-prefs__title { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+.dk-form { flex: 1; min-height: 0; overflow: hidden; padding: 6px 16px 16px; display: grid; align-content: start; gap: 6px; }
+.dk-form h4 { margin: 10px 0 2px 10px; font-size: 13px; font-weight: 600; }
+.dk-group { display: grid; padding: 0 10px; border-radius: 12px; background: var(--dk-fill-2); }
+.dk-group > div { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 8px 0; box-shadow: 0 0.5px 0 var(--dk-sep); }
+.dk-group > div:last-child { box-shadow: none; }
+.dk-group .dk-switch { margin-left: auto; width: 32px; height: 18px; }
+.dk-group .dk-switch::after { width: 23px; height: 15px; }
+.dk-group .dk-muted { color: var(--dk-2); }
+.dk-group .dk-cap { display: block; font-size: 10.5px; line-height: 1.38; color: var(--dk-2); }
+.dk-btn { margin-left: auto; padding: 3px 10px; border-radius: 7px; font-size: 13px; background: var(--dk-fill); }
+.dk-rel { flex: 1; display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 10px; font-size: 11px; color: var(--dk-accent); background: var(--dk-fill-2); }
+.dk-rel .dk-i { width: 16px; height: 16px; }
+.dk-rel .dk-chev { margin-left: auto; width: 10px; height: 10px; stroke-width: 2.4; color: var(--dk-3); }
+.dk-sub { padding-left: 20px !important; font-size: 11px; color: var(--dk-2); gap: 6px !important; min-height: 30px !important; }
+.dk-sub .dk-i { width: 13px; height: 13px; }
+/* Narrow screens: the settings sidebar folds away, like a narrow Settings window */
+.dk-prefs.is-compact .dk-prefs__side { display: none; }
+.dk-prefs.is-compact .dk-prefs__tb { padding-left: 4px; }
+.dk-prefs__tb .dk-lights { display: none; margin-right: 0; }
+.dk-prefs.is-compact .dk-prefs__tb .dk-lights { display: flex; }
+
+/* ---------- Before & after (ImagePreviewSheet over the main window) ---------- */
+.dk-sheetwrap { position: relative; flex: none; width: var(--w); padding-top: 58px; text-align: left; font-family: var(--dk-font); }
+.dk-sheetwrap > .dk-win--behind { position: absolute; top: 0; left: 50%; translate: -50% 0; width: 70%; height: 120px; opacity: 0.86; }
+.dk-win--behind .dk-title { opacity: 0.55; }
+.dk-sheet { --r: 26px; height: auto; }
+.dk-sheet__head { flex: none; display: flex; align-items: center; gap: 12px; padding: 12px 16px; box-shadow: 0 1px 0 var(--dk-sep); }
+.dk-seg { flex: none; display: grid; grid-template-columns: 1fr 1fr; width: 200px; padding: 2px; border-radius: 999px; background: var(--dk-fill); }
+.dk-seg button { all: unset; box-sizing: border-box; height: 24px; border-radius: 999px; text-align: center; font: 13px var(--dk-font); color: var(--dk-text); cursor: default; }
+.dk-seg button[aria-pressed='true'] { color: #fff; background: var(--dk-accent); box-shadow: 0 1px 2px rgb(0 0 0 / 0.15); }
+.dk-seg button:focus-visible { outline: 2px solid var(--dk-accent); outline-offset: 2px; }
+.dk-sheet__file { flex: 1; min-width: 0; text-align: center; font-size: 10px; color: var(--dk-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dk-done { flex: none; padding: 4px 14px; border-radius: 999px; font-size: 13px; color: #fff; background: var(--dk-accent); box-shadow: 0 1px 2px rgb(0 0 0 / 0.15); }
+.dk-sheet__body { position: relative; padding: 12px; }
+.dk-compare { position: relative; touch-action: pan-y; cursor: ew-resize; }
+.dk-compare__img { position: relative; overflow: hidden; }
+.dk-compare__img + .dk-compare__img { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--pos, 50%)) 0 0); }
+.dk-compare__line { position: absolute; top: -12px; bottom: -12px; left: var(--pos, 50%); width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 4px rgb(0 0 0 / 0.35); pointer-events: none; }
+.dk-handle {
+  all: unset; box-sizing: border-box; position: absolute; top: 50%; left: var(--pos, 50%); width: 28px; height: 28px; margin: -14px 0 0 -14px; border-radius: 50%;
+  display: grid; place-items: center; color: rgb(60 60 67 / 0.62); background: #fff; box-shadow: 0 0 4px rgb(0 0 0 / 0.35); cursor: ew-resize;
+}
+.dk-handle .dk-i { width: 12px; height: 12px; stroke-width: 2.3; }
+.dk-handle:focus-visible { outline: 2px solid #fff; outline-offset: 3px; box-shadow: 0 0 0 5px var(--dk-accent); }
+.dk-tag {
+  position: absolute; bottom: 12px; display: grid; gap: 2px; padding: 5px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; color: var(--dk-text);
+  background: rgb(255 255 255 / 0.55); -webkit-backdrop-filter: blur(14px) saturate(1.6); backdrop-filter: blur(14px) saturate(1.6); transition: opacity 0.2s ease;
+}
+.dk-tag span { font: 500 9.5px var(--dk-mono); }
+.dk-tag--l { left: 12px; }
+.dk-tag--r { right: 12px; text-align: right; }
+.dk-compare.is-nudging .dk-compare__img + .dk-compare__img { transition: clip-path 0.4s cubic-bezier(0.45, 0, 0.25, 1); }
+.dk-compare.is-nudging .dk-compare__line, .dk-compare.is-nudging .dk-handle { transition: left 0.4s cubic-bezier(0.45, 0, 0.25, 1); }
+.dk-compare[data-near-left] .dk-tag--l, .dk-compare[data-near-right] .dk-tag--r { opacity: 0; }
+@media (prefers-color-scheme: dark) { .dk-tag { background: rgb(30 30 36 / 0.55); } }
+.dk-sbs { display: none; grid-template-columns: 1fr 1px 1fr; gap: 0; aspect-ratio: 16 / 9; align-items: center; }
+.dk-sbs > i { background: var(--dk-sep); }
+.dk-sbs figure { margin: 0; padding: 0 12px; display: grid; gap: 6px; justify-items: center; }
+.dk-sbs figcaption { display: flex; gap: 4px; font-size: 10px; font-weight: 500; color: var(--dk-2); }
+.dk-sbs figcaption span { font: 10px var(--dk-mono); }
+.dk-sbs figcaption em { font-style: normal; color: var(--dk-3); }
+.dk-sheet[data-mode='side'] .dk-compare { display: none; }
+.dk-sheet[data-mode='side'] .dk-sbs { display: grid; }
+
+/* The "photo": a dusk sky over hills, drawn with gradients. The compressed copy is posterized and a touch soft. */
+.dk-scene { position: relative; aspect-ratio: 16 / 9; width: 100%; overflow: hidden; background:
+  radial-gradient(1.2px 1.2px at 12% 14%, #fff 50%, transparent 51%),
+  radial-gradient(1px 1px at 28% 8%, rgb(255 255 255 / 0.8) 50%, transparent 51%),
+  radial-gradient(1.4px 1.4px at 61% 12%, #fff 50%, transparent 51%),
+  radial-gradient(1px 1px at 78% 22%, rgb(255 255 255 / 0.7) 50%, transparent 51%),
+  radial-gradient(1.2px 1.2px at 90% 7%, #fff 50%, transparent 51%),
+  radial-gradient(1px 1px at 46% 24%, rgb(255 255 255 / 0.6) 50%, transparent 51%),
+  radial-gradient(34% 30% at 31% 70%, #fff3dc 0%, #ffc7a4 22%, rgb(242 128 178 / 0.85) 48%, transparent 72%),
+  radial-gradient(110% 62% at 38% 86%, rgb(232 108 170 / 0.9) 0%, rgb(150 70 184 / 0.7) 38%, transparent 72%),
+  linear-gradient(#100b33 0%, #241a62 34%, #4d3497 60%, #9a54b4 82%, #e98db1 100%); }
+.dk-scene svg { position: absolute; left: 0; bottom: 0; width: 100%; height: 42%; }
+.dk-scene--after { filter: url(#dk-posterize) brightness(1.08) saturate(0.94); }
+.dk-sbs .dk-scene { border-radius: 2px; }
+
+/* ---------- Replay button under the drop demo ---------- */
+.dk-replay {
+  display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 13px; border: 0; border-radius: 999px; cursor: pointer;
+  font: 500 13px var(--font, system-ui); color: rgb(22 16 64 / 0.9); background: rgb(255 255 255 / 0.5);
+  -webkit-backdrop-filter: blur(14px) saturate(1.6); backdrop-filter: blur(14px) saturate(1.6);
+  box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.8), 0 0 0 0.5px rgb(20 10 70 / 0.12), 0 6px 16px -8px rgb(20 10 70 / 0.4);
+  transition: background var(--t-ui, 180ms) ease, opacity 0.3s ease;
+}
+@media (hover: hover) { .dk-replay:hover { background: rgb(255 255 255 / 0.7); } }
+.dk-replay svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.dk-replay:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.dk-replay[data-busy] { opacity: 0.55; pointer-events: none; }
+@media (prefers-color-scheme: dark) {
+  .dk-replay { color: rgb(244 242 255 / 0.92); background: rgb(255 255 255 / 0.12); box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.18), 0 6px 16px -8px rgb(0 0 0 / 0.6); }
+}
+@media (prefers-color-scheme: dark) and (hover: hover) { .dk-replay:hover { background: rgb(255 255 255 / 0.2); } }
+
+.dk-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ---------- Drop demo states ---------- */
+.dk-demo[data-state='idle'] .dk-drop__hover, .dk-demo[data-state='working'] .dk-drop, .dk-demo[data-state='done'] .dk-drop { opacity: 0; visibility: hidden; }
+.dk-demo[data-state='hover'] .dk-drop__idle { opacity: 0; }
+.dk-demo[data-state='hover'] .dk-drop__hover { opacity: 1; }
+.dk-demo .dk-list { visibility: hidden; }
+.dk-demo[data-state='working'] .dk-list, .dk-demo[data-state='done'] .dk-list { visibility: visible; }
+.dk-demo [data-bar] { display: none; }
+.dk-demo[data-state='idle'] [data-bar~='idle'], .dk-demo[data-state='hover'] [data-bar~='idle'],
+.dk-demo[data-state='working'] [data-bar~='working'], .dk-demo[data-state='done'] [data-bar~='done'] { display: block; }
+.dk-demo[data-state='idle'] .dk-bar, .dk-demo[data-state='hover'] .dk-bar { justify-content: center; }
+.dk-demo[data-state='idle'] .dk-bar__status, .dk-demo[data-state='hover'] .dk-bar__status { text-align: center; }
+.dk-drag.is-away { opacity: 0; translate: 190px 230px; }
+.dk-drag.is-dropped { opacity: 0; scale: 0.4; translate: -90px 40px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dk-target i, .dk-disc .dk-i, .dk-prog .dk-i { animation: none !important; }
+  .dk-drag, .dk-drop__idle, .dk-drop__hover, .dk-tag { transition: none !important; }
+  .dk-row.is-in, .dk-menu { animation: none !important; }
+}
+
+/* Under the sidebar the drop zone's label would only read as noise through the glass */
+.dk-win:has(.dk-side) .dk-drop__idle-label { visibility: hidden; }
+
+/* ---------- Scenes in the guided feature rows ---------- */
+/* Main windows whose rows compress when their scene opens (app-ui.js: data-batch) */
+.dk-batch [data-bar] { display: none; }
+.dk-batch[data-state='working'] [data-bar~='working'], .dk-batch[data-state='done'] [data-bar~='done'] { display: block; }
+/* A popup button in a settings form (Picker with .menu style) */
+.dk-pop { display: inline-flex; align-items: center; gap: 6px; }
+.dk-pop .dk-i { width: 9px; height: 9px; stroke-width: 2.6; color: var(--dk-2); }
+/* The keys under the Clipboard Compress window (site chrome, not part of the app) */
+.dk-keys {
+  display: inline-flex; gap: 4px; margin: 0; padding: 5px; border-radius: 999px;
+  background: rgb(255 255 255 / 0.5); -webkit-backdrop-filter: blur(14px) saturate(1.6); backdrop-filter: blur(14px) saturate(1.6);
+  box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.8), 0 0 0 0.5px rgb(20 10 70 / 0.12), 0 6px 16px -8px rgb(20 10 70 / 0.4);
+}
+.dk-keys kbd {
+  min-width: 26px; height: 24px; padding: 0 7px; border-radius: 7px; display: grid; place-items: center;
+  font: 600 13px var(--dk-font, system-ui); color: rgb(22 16 64 / 0.88); background: rgb(255 255 255 / 0.75); box-shadow: 0 1px 0 rgb(20 10 70 / 0.18);
+}
+@media (prefers-color-scheme: dark) {
+  .dk-keys { background: rgb(255 255 255 / 0.12); box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.18), 0 6px 16px -8px rgb(0 0 0 / 0.6); }
+  .dk-keys kbd { color: rgb(244 242 255 / 0.92); background: rgb(255 255 255 / 0.14); box-shadow: 0 1px 0 rgb(0 0 0 / 0.4); }
+}
+
+/* ---------- Touch screens ----------
+   The windows stay drawn to the app's own sizes, so a few controls would be too small for a finger.
+   An invisible ::after widens what a tap can hit, and the right-click menu gets taller rows. */
+@media (pointer: coarse) {
+  .dk-chips > button, .dk-seg button { position: relative; }
+  .dk-chips > button::after { content: ''; position: absolute; inset: -12px -2px; }
+  .dk-seg button::after { content: ''; position: absolute; inset: -12px 0; }
+  .dk-handle::after { content: ''; position: absolute; inset: -14px; border-radius: 50%; }
+  .dk-replay { position: relative; }
+  .dk-replay::after { content: ''; position: absolute; inset: -7px -2px; border-radius: inherit; }
+  .dk-menu button { height: 34px; }
+}
+/* ---------- The narrow phone layout (app-ui.js adds .is-compact) ---------- */
+/* The drop zone's card stack would peek out beside the sidebar panel. */
+.dk-win.is-compact:has(.dk-side) .dk-stack { visibility: hidden; }
+/* Finished rows keep Quick Look but drop "Show in Finder", so the file names stay readable. */
+.dk-win.is-compact .dk-status > .dk-pill:not(.dk-pill--eye):not(.dk-pill--queued) { display: none; }
+
+/* Controls read a touch heavier (macOS draws 13px controls bolder than the web does) and never wrap. */
+.dk-btn, .dk-seg button, .dk-chips > button { font-weight: 500; white-space: nowrap; }
+.dk-chips > [aria-checked='true'], .dk-chips > .is-on { font-weight: 600; }
