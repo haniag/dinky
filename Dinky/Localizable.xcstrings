@@ -13106,9 +13106,6 @@
         }
       }
     },
-    "H" : {
-      "comment" : "Percentage resize: height field label (abbreviation)."
-    },
     "H.264" : {
       "comment" : "Video codec menu.",
       "extractionState" : "stale",
@@ -15023,9 +15020,6 @@
     "Italiano" : {
 
     },
-    "Keep proportions" : {
-      "comment" : "Percentage resize: lock button accessibility label."
-    },
     "Keyboard shortcuts…" : {
       "comment" : "Settings UI.",
       "localizations" : {
@@ -15345,9 +15339,6 @@
     },
     "Links: output follows your Settings for each file after download." : {
       "comment" : "Compression confirm: remote-only queue."
-    },
-    "Lock proportions" : {
-      "comment" : "Percentage resize: lock button tooltip when unlocked."
     },
     "Lossless WebP" : {
       "comment" : "Settings UI.\nSidebar: lossless WebP toggle."
@@ -18170,9 +18161,6 @@
           }
         }
       }
-    },
-    "On" : {
-      "comment" : "Accessibility value: toggle on."
     },
     "On by default: quick choices and plain-language summaries. Turn off to show every image, video, and PDF control in the sidebar." : {
       "comment" : "Settings UI.",
@@ -21370,9 +21358,6 @@
     },
     "Pro tools (CLI/API)" : {
       "comment" : "Settings UI."
-    },
-    "Proportions locked: width and height change together" : {
-      "comment" : "Percentage resize: lock button tooltip when locked."
     },
     "px" : {
       "comment" : "Unit abbreviation for pixels.\nUnit: pixels.",
@@ -29699,20 +29684,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "請造訪 dinkyfiles.com"
-          }
-        }
-      }
-    },
-    "W" : {
-      "comment" : "Percentage resize: width field label (abbreviation)."
-    },
-    "W %lld%% × H %lld%%" : {
-      "comment" : "Preset summary: per-axis percentage resize (width, height).",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "W %1$lld%% × H %2$lld%%"
           }
         }
       }

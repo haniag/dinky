@@ -31,8 +31,7 @@ public enum DinkyCLIHelp {
           -f, --format auto|webp|avif|png|heic   (default: auto)
           -o, --output-dir <path>
           -w, --max-width <px>      --max-size-kb <k>
-          --scale <pct>            (resize width and height to 1-400% of the original)
-          --scale-width <pct>      --scale-height <pct>   (one axis alone keeps proportions)
+          --scale <pct>            (resize to 1-100% of the original width and height)
           -q, --quality <0-100>    (disables smart quality)
           --smart-quality | --no-smart-quality
           --content-hint auto|photo|graphic|mixed

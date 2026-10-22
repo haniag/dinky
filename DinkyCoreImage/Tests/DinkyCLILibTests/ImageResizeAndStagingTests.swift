@@ -46,31 +46,24 @@ final class ImageResizeAndStagingTests: XCTestCase {
     func testPercentScaleResizesBothAxes() async throws {
         let src = try writePNG(named: "scaled", width: 400, height: 200)
         let out = workDir.appendingPathComponent("scaled-out.webp")
-        let r = try await compress(src, format: .webp, output: out, goals: CompressionGoals(scale: ImageScalePercent(width: 50, height: 25)))
-        XCTAssertEqual(r.resize, ImageResizeInfo(originalWidth: 400, originalHeight: 200, outputWidth: 200, outputHeight: 50))
-        XCTAssertEqual(try pixelSize(r.outputURL), CGSize(width: 200, height: 50))
-    }
-
-    func testPercentScaleCanEnlarge() async throws {
-        let src = try writePNG(named: "small", width: 100, height: 60)
-        let out = workDir.appendingPathComponent("small-out.png")
-        let r = try await compress(src, format: .png, output: out, goals: CompressionGoals(scale: ImageScalePercent(uniform: 150)))
-        XCTAssertEqual(try pixelSize(r.outputURL), CGSize(width: 150, height: 90))
+        let r = try await compress(src, format: .webp, output: out, goals: CompressionGoals(scalePercent: 50))
+        XCTAssertEqual(r.resize, ImageResizeInfo(originalWidth: 400, originalHeight: 200, outputWidth: 200, outputHeight: 100))
+        XCTAssertEqual(try pixelSize(r.outputURL), CGSize(width: 200, height: 100))
     }
 
     func testMaxWidthCapsScaledImage() async throws {
         let src = try writePNG(named: "capped", width: 4000, height: 2000)
         let out = workDir.appendingPathComponent("capped-out.webp")
-        let goals = CompressionGoals(maxWidth: 1000, scale: ImageScalePercent(width: 50, height: 100))
+        let goals = CompressionGoals(maxWidth: 1000, scalePercent: 50)
         let r = try await compress(src, format: .webp, output: out, goals: goals)
-        // 50% × 100% → 2000×2000, then the width cap keeps that square shape at 1000×1000.
-        XCTAssertEqual(try pixelSize(r.outputURL), CGSize(width: 1000, height: 1000))
+        // 50% → 2000×1000, then the width cap keeps the shape at 1000×500.
+        XCTAssertEqual(try pixelSize(r.outputURL), CGSize(width: 1000, height: 500))
     }
 
     func testFullScaleIsNotResized() async throws {
         let src = try writePNG(named: "full", width: 300, height: 300)
         let out = workDir.appendingPathComponent("full-out.webp")
-        let r = try await compress(src, format: .webp, output: out, goals: CompressionGoals(scale: ImageScalePercent(uniform: 100)))
+        let r = try await compress(src, format: .webp, output: out, goals: CompressionGoals(scalePercent: 100))
         XCTAssertNil(r.resize)
     }
 

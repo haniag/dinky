@@ -12,8 +12,7 @@ public struct CompressionPreset: Codable, Identifiable, Sendable {
     public var maxWidth: Int
     /// Scale images by a percentage of their original width and height (before the max width cap).
     public var resizePercentEnabled: Bool
-    public var resizeWidthPercent: Int
-    public var resizeHeightPercent: Int
+    public var resizePercent: Int
     public var maxFileSizeEnabled: Bool
     public var maxFileSizeKB: Int
     // Output
@@ -94,8 +93,7 @@ public struct CompressionPreset: Codable, Identifiable, Sendable {
         maxWidthEnabled: Bool,
         maxWidth: Int,
         resizePercentEnabled: Bool = false,
-        resizeWidthPercent: Int = 50,
-        resizeHeightPercent: Int = 50,
+        resizePercent: Int = 50,
         maxFileSizeEnabled: Bool,
         maxFileSizeKB: Int,
         saveLocationRaw: String,
@@ -148,8 +146,7 @@ public struct CompressionPreset: Codable, Identifiable, Sendable {
         self.maxWidthEnabled = maxWidthEnabled
         self.maxWidth = maxWidth
         self.resizePercentEnabled = resizePercentEnabled
-        self.resizeWidthPercent = resizeWidthPercent
-        self.resizeHeightPercent = resizeHeightPercent
+        self.resizePercent = resizePercent
         self.maxFileSizeEnabled = maxFileSizeEnabled
         self.maxFileSizeKB = maxFileSizeKB
         self.saveLocationRaw = saveLocationRaw
@@ -206,8 +203,7 @@ public struct CompressionPreset: Codable, Identifiable, Sendable {
             maxWidthEnabled: source.maxWidthEnabled,
             maxWidth: source.maxWidth,
             resizePercentEnabled: source.resizePercentEnabled,
-            resizeWidthPercent: source.resizeWidthPercent,
-            resizeHeightPercent: source.resizeHeightPercent,
+            resizePercent: source.resizePercent,
             maxFileSizeEnabled: source.maxFileSizeEnabled,
             maxFileSizeKB: source.maxFileSizeKB,
             saveLocationRaw: source.saveLocationRaw,
@@ -266,8 +262,7 @@ public struct CompressionPreset: Codable, Identifiable, Sendable {
         maxWidthEnabled = try c.decodeIfPresent(Bool.self, forKey: .maxWidthEnabled) ?? false
         maxWidth = try c.decodeIfPresent(Int.self, forKey: .maxWidth) ?? 1920
         resizePercentEnabled = try c.decodeIfPresent(Bool.self, forKey: .resizePercentEnabled) ?? false
-        resizeWidthPercent = try c.decodeIfPresent(Int.self, forKey: .resizeWidthPercent) ?? 50
-        resizeHeightPercent = try c.decodeIfPresent(Int.self, forKey: .resizeHeightPercent) ?? 50
+        resizePercent = try c.decodeIfPresent(Int.self, forKey: .resizePercent) ?? 50
         maxFileSizeEnabled = try c.decodeIfPresent(Bool.self, forKey: .maxFileSizeEnabled) ?? false
         maxFileSizeKB = try c.decodeIfPresent(Int.self, forKey: .maxFileSizeKB) ?? 2048
         saveLocationRaw = try c.decodeIfPresent(String.self, forKey: .saveLocationRaw) ?? "sameFolder"

@@ -1505,9 +1505,7 @@ private struct PresetsTab: View {
             Toggle(String(localized: "Resize by percentage", comment: "Settings UI."), isOn: binding(\.resizePercentEnabled, snapshot: snapshot))
             if live.resizePercentEnabled {
                 ScalePercentControls(
-                    widthPercent: binding(\.resizeWidthPercent, snapshot: snapshot),
-                    heightPercent: binding(\.resizeHeightPercent, snapshot: snapshot),
-                    linked: $prefs.resizePercentLinked,
+                    percent: binding(\.resizePercent, snapshot: snapshot),
                     fieldWidth: 64
                 )
                 settingsHelperText(String(localized: "Percent of the original width and height. Max width still applies after scaling.", comment: "Settings UI."))

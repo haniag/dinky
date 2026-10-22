@@ -962,17 +962,13 @@ final class ContentViewModel: ObservableObject {
             return CompressionGoals(
                 maxWidth: p.maxWidthEnabled ? p.maxWidth : nil,
                 maxFileSizeKB: p.maxFileSizeEnabled ? p.maxFileSizeKB : nil,
-                scale: p.resizePercentEnabled
-                    ? ImageScalePercent(width: p.resizeWidthPercent, height: p.resizeHeightPercent)
-                    : nil
+                scalePercent: p.resizePercentEnabled ? p.resizePercent : nil
             )
         }
         return CompressionGoals(
             maxWidth: prefs.maxWidthEnabled ? prefs.maxWidth : nil,
             maxFileSizeKB: prefs.maxFileSizeEnabled ? prefs.maxFileSizeKB : nil,
-            scale: prefs.resizePercentEnabled
-                ? ImageScalePercent(width: prefs.resizeWidthPercent, height: prefs.resizeHeightPercent)
-                : nil
+            scalePercent: prefs.resizePercentEnabled ? prefs.resizePercent : nil
         )
     }
 
@@ -1082,7 +1078,7 @@ final class ContentViewModel: ObservableObject {
         CompressionTiming.logReproContext(
             media: "image",
             smartQuality: smartQ,
-            extra: "autoFormat=\(autoFmt) format=\(format.rawValue) concurrent=\(prefs.concurrentCompressionLimit) maxWidth=\(goals.maxWidth != nil) scale=\(goals.scale != nil) maxFileSizeKB=\(goals.maxFileSizeKB != nil)"
+            extra: "autoFormat=\(autoFmt) format=\(format.rawValue) concurrent=\(prefs.concurrentCompressionLimit) maxWidth=\(goals.maxWidth != nil) scale=\(goals.scalePercent != nil) maxFileSizeKB=\(goals.maxFileSizeKB != nil)"
         )
         let progressHandler: @Sendable (Float) -> Void = { p in
             Task { @MainActor in

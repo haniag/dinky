@@ -816,9 +816,7 @@ struct SidebarView: View {
         if prefs.resizePercentEnabled {
             VStack(alignment: .leading, spacing: 8) {
                 ScalePercentControls(
-                    widthPercent: Binding(get: { prefs.resizeWidthPercent }, set: { prefs.resizeWidthPercent = $0 }),
-                    heightPercent: Binding(get: { prefs.resizeHeightPercent }, set: { prefs.resizeHeightPercent = $0 }),
-                    linked: Binding(get: { prefs.resizePercentLinked }, set: { prefs.resizePercentLinked = $0 })
+                    percent: Binding(get: { prefs.resizePercent }, set: { prefs.resizePercent = $0 })
                 )
                 .font(.system(size: 11))
                 settingsHelperText(String(localized: "Percent of the original width and height. Max width still applies after scaling.", comment: "Sidebar: percentage resize helper."))

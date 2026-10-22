@@ -66,16 +66,14 @@ public enum DinkyCompressArgParser {
                     guard i < n, let w = Int(args[i]) else { throw DinkyCLIParseError(message: "invalid --max-width") }
                     o.maxWidth = w
                     explicit.insert("maxWidth")
-                case "--scale", "--scale-width", "--scale-height":
-                    let flag = a
+                case "--scale":
                     i += 1
                     guard i < n,
                           let pct = Int(args[i].hasSuffix("%") ? String(args[i].dropLast()) : args[i]),
-                          ImageScalePercent.allowedRange.contains(pct) else {
-                        throw DinkyCLIParseError(message: "invalid \(flag) (expected 1-400 percent)")
+                          CompressionGoals.scalePercentRange.contains(pct) else {
+                        throw DinkyCLIParseError(message: "invalid --scale (expected 1-100 percent)")
                     }
-                    if flag != "--scale-height" { o.scaleWidthPercent = pct }
-                    if flag != "--scale-width" { o.scaleHeightPercent = pct }
+                    o.scalePercent = pct
                     explicit.insert("scale")
                 case "--max-size-kb":
                     i += 1

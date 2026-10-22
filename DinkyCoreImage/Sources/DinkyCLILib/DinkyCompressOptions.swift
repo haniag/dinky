@@ -7,9 +7,8 @@ public struct DinkyCompressOptions: Sendable {
     public var quality: Int?
     public var maxWidth: Int?
     public var maxFileSizeKB: Int?
-    /// Percentage of the original width/height; nil leaves that axis to the other one (or unscaled).
-    public var scaleWidthPercent: Int?
-    public var scaleHeightPercent: Int?
+    /// Percent of the original width and height (1–100); nil leaves images unscaled.
+    public var scalePercent: Int?
     public var stripMetadata: Bool
     public var outputDir: URL?
     public var smartQuality: Bool
@@ -27,8 +26,7 @@ public struct DinkyCompressOptions: Sendable {
         quality: Int? = nil,
         maxWidth: Int? = nil,
         maxFileSizeKB: Int? = nil,
-        scaleWidthPercent: Int? = nil,
-        scaleHeightPercent: Int? = nil,
+        scalePercent: Int? = nil,
         stripMetadata: Bool = true,
         outputDir: URL? = nil,
         smartQuality: Bool = true,
@@ -45,8 +43,7 @@ public struct DinkyCompressOptions: Sendable {
         self.quality = quality
         self.maxWidth = maxWidth
         self.maxFileSizeKB = maxFileSizeKB
-        self.scaleWidthPercent = scaleWidthPercent
-        self.scaleHeightPercent = scaleHeightPercent
+        self.scalePercent = scalePercent
         self.stripMetadata = stripMetadata
         self.outputDir = outputDir
         self.smartQuality = smartQuality
@@ -58,15 +55,5 @@ public struct DinkyCompressOptions: Sendable {
         self.chromaSubsamplingRaw = chromaSubsamplingRaw
         self.webpLossless = webpLossless
         self.pngOutputModeRaw = pngOutputModeRaw
-    }
-
-    /// Percentage resize from the scale flags. Giving only one axis scales both by it (keeps proportions).
-    public var scale: ImageScalePercent? {
-        switch (scaleWidthPercent, scaleHeightPercent) {
-        case (nil, nil): return nil
-        case let (w?, nil): return ImageScalePercent(uniform: w)
-        case let (nil, h?): return ImageScalePercent(uniform: h)
-        case let (w?, h?): return ImageScalePercent(width: w, height: h)
-        }
     }
 }

@@ -110,10 +110,7 @@ final class DinkyPreferences: ObservableObject {
     @AppStorage("maxWidthEnabled")      var maxWidthEnabled: Bool = false
     @AppStorage("maxWidth")             var maxWidth: Int = 1920
     @AppStorage("resizePercentEnabled") var resizePercentEnabled: Bool = false
-    @AppStorage("resizeWidthPercent")   var resizeWidthPercent: Int = 50
-    @AppStorage("resizeHeightPercent")  var resizeHeightPercent: Int = 50
-    /// UI only: editing one percentage field mirrors it into the other.
-    @AppStorage("resizePercentLinked")  var resizePercentLinked: Bool = true
+    @AppStorage("resizePercent")        var resizePercent: Int = 50
     @AppStorage("maxFileSizeEnabled")   var maxFileSizeEnabled: Bool = false
     @AppStorage("maxFileSizeKB")        var maxFileSizeKB: Int = 2048   // 2 MB default
 
@@ -689,12 +686,7 @@ final class DinkyPreferences: ObservableObject {
         let maxWOn = d.object(forKey: "maxWidthEnabled") as? Bool ?? false
         let maxW = maxWOn ? (d.object(forKey: "maxWidth") as? Int ?? 1920) : nil
         let scaleOn = d.object(forKey: "resizePercentEnabled") as? Bool ?? false
-        let scale = scaleOn
-            ? ImageScalePercent(
-                width: d.object(forKey: "resizeWidthPercent") as? Int ?? 50,
-                height: d.object(forKey: "resizeHeightPercent") as? Int ?? 50
-            )
-            : nil
+        let scalePct = scaleOn ? (d.object(forKey: "resizePercent") as? Int ?? 50) : nil
         let maxFSOn = d.object(forKey: "maxFileSizeEnabled") as? Bool ?? false
         let maxFS = maxFSOn ? (d.object(forKey: "maxFileSizeKB") as? Int ?? 2048) : nil
         let concurrentRaw = d.object(forKey: "concurrentTasks") as? Int ?? 3
@@ -704,7 +696,7 @@ final class DinkyPreferences: ObservableObject {
         let webpLL = d.object(forKey: "webpLossless") as? Bool ?? false
         let pngRaw = d.string(forKey: "pngOutputMode") ?? PNGOutputMode.lossless.rawValue
         let pngMode = PNGOutputMode(rawValue: pngRaw) ?? .lossless
-        return (strip, smart, hint, CompressionGoals(maxWidth: maxW, maxFileSizeKB: maxFS, scale: scale), parallelLimit, chroma, webpLL, pngMode)
+        return (strip, smart, hint, CompressionGoals(maxWidth: maxW, maxFileSizeKB: maxFS, scalePercent: scalePct), parallelLimit, chroma, webpLL, pngMode)
     }
 
     /// PDF compression defaults for Shortcuts — same keys as `@AppStorage` on this type.

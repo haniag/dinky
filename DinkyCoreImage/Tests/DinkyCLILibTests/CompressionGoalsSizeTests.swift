@@ -7,44 +7,46 @@ final class CompressionGoalsSizeTests: XCTestCase {
         XCTAssertNil(CompressionGoals().outputPixelSize(width: 800, height: 600))
     }
 
-    func testUniformScale() throws {
-        let size = try XCTUnwrap(CompressionGoals(scale: ImageScalePercent(uniform: 50)).outputPixelSize(width: 800, height: 600))
+    func testScaleKeepsProportions() throws {
+        let size = try XCTUnwrap(CompressionGoals(scalePercent: 50).outputPixelSize(width: 800, height: 600))
         XCTAssertEqual(size.width, 400)
         XCTAssertEqual(size.height, 300)
     }
 
-    func testIndependentAxes() throws {
-        let size = try XCTUnwrap(CompressionGoals(scale: ImageScalePercent(width: 100, height: 50)).outputPixelSize(width: 800, height: 600))
-        XCTAssertEqual(size.width, 800)
-        XCTAssertEqual(size.height, 300)
+    func testPortraitScale() throws {
+        let size = try XCTUnwrap(CompressionGoals(scalePercent: 50).outputPixelSize(width: 600, height: 800))
+        XCTAssertEqual(size.width, 300)
+        XCTAssertEqual(size.height, 400)
     }
 
     func testTinyScaleNeverReachesZero() throws {
-        let size = try XCTUnwrap(CompressionGoals(scale: ImageScalePercent(uniform: 1)).outputPixelSize(width: 20, height: 10))
+        let size = try XCTUnwrap(CompressionGoals(scalePercent: 1).outputPixelSize(width: 20, height: 10))
         XCTAssertEqual(size.width, 1)
         XCTAssertEqual(size.height, 1)
     }
 
     func testMaxWidthAppliesAfterScale() throws {
-        let goals = CompressionGoals(maxWidth: 500, scale: ImageScalePercent(width: 50, height: 50))
+        let goals = CompressionGoals(maxWidth: 500, scalePercent: 50)
         let size = try XCTUnwrap(goals.outputPixelSize(width: 2000, height: 1000))
         XCTAssertEqual(size.width, 500)
         XCTAssertEqual(size.height, 250)
     }
 
     func testScaleUnderMaxWidthIsKept() throws {
-        let goals = CompressionGoals(maxWidth: 1920, scale: ImageScalePercent(uniform: 25))
+        let goals = CompressionGoals(maxWidth: 1920, scalePercent: 25)
         let size = try XCTUnwrap(goals.outputPixelSize(width: 4000, height: 3000))
         XCTAssertEqual(size.width, 1000)
         XCTAssertEqual(size.height, 750)
     }
 
-    func testPercentagesAreClamped() {
-        XCTAssertEqual(ImageScalePercent(width: 0, height: 9000), ImageScalePercent(width: 1, height: 400))
+    func testPercentagesAreClampedToShrinkOnly() {
+        XCTAssertEqual(CompressionGoals(scalePercent: 0).scalePercent, 1)
+        XCTAssertEqual(CompressionGoals(scalePercent: 150).scalePercent, 100)
+        XCTAssertNil(CompressionGoals(scalePercent: 150).outputPixelSize(width: 100, height: 60))
     }
 
     func testIdentityScaleDoesNotChangeDimensions() {
-        XCTAssertFalse(CompressionGoals(scale: ImageScalePercent(uniform: 100)).changesDimensions)
-        XCTAssertTrue(CompressionGoals(scale: ImageScalePercent(uniform: 99)).changesDimensions)
+        XCTAssertFalse(CompressionGoals(scalePercent: 100).changesDimensions)
+        XCTAssertTrue(CompressionGoals(scalePercent: 99).changesDimensions)
     }
 }

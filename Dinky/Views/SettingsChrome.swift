@@ -129,70 +129,21 @@ func settingsChipGrid(
 
 // MARK: - Percentage resize
 
-/// Width and height percentage fields with a proportions lock (sidebar + Settings presets tab).
-/// While locked, editing either field sets both, so the image keeps its aspect ratio.
+/// Percentage chips plus a field (sidebar + Settings presets tab). Scales width and height together.
 struct ScalePercentControls: View {
-    @Binding var widthPercent: Int
-    @Binding var heightPercent: Int
-    @Binding var linked: Bool
+    @Binding var percent: Int
     var fieldWidth: CGFloat = 52
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            settingsChipGrid(
-                presets: settingsScalePercentPresets,
-                current: widthPercent == heightPercent ? widthPercent : -1,
-                fixedColumnCount: 3
-            ) { pct in
-                widthPercent = pct
-                heightPercent = pct
-                linked = true
-            }
+            settingsChipGrid(presets: settingsScalePercentPresets, current: percent, fixedColumnCount: 3) { percent = $0 }
             HStack(spacing: 6) {
-                percentField(
-                    String(localized: "W", comment: "Percentage resize: width field label (abbreviation)."),
-                    value: $widthPercent,
-                    mirror: $heightPercent
-                )
-                Button {
-                    linked.toggle()
-                    if linked { heightPercent = widthPercent }
-                } label: {
-                    Image(systemName: linked ? "lock.fill" : "lock.open")
-                        .foregroundStyle(linked ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
-                }
-                .buttonStyle(.borderless)
-                .help(linked
-                      ? String(localized: "Proportions locked: width and height change together", comment: "Percentage resize: lock button tooltip when locked.")
-                      : String(localized: "Lock proportions", comment: "Percentage resize: lock button tooltip when unlocked."))
-                .accessibilityLabel(String(localized: "Keep proportions", comment: "Percentage resize: lock button accessibility label."))
-                .accessibilityValue(linked
-                                    ? String(localized: "On", comment: "Accessibility value: toggle on.")
-                                    : String(localized: "Off", comment: "Accessibility value: toggle off."))
-                percentField(
-                    String(localized: "H", comment: "Percentage resize: height field label (abbreviation)."),
-                    value: $heightPercent,
-                    mirror: $widthPercent
-                )
+                TextField("50", value: Binding(
+                    get: { percent }, set: { percent = CompressionGoals.clampedScalePercent($0) }
+                ), format: .number)
+                .textFieldStyle(.roundedBorder).frame(width: fieldWidth)
+                Text(verbatim: "%").foregroundStyle(.secondary)
             }
-        }
-    }
-
-    private func percentField(_ label: String, value: Binding<Int>, mirror: Binding<Int>) -> some View {
-        HStack(spacing: 4) {
-            Text(label).foregroundStyle(.secondary)
-            TextField("50", value: Binding(
-                get: { value.wrappedValue },
-                set: {
-                    let pct = ImageScalePercent.clamped($0)
-                    value.wrappedValue = pct
-                    if linked { mirror.wrappedValue = pct }
-                }
-            ), format: .number)
-            .textFieldStyle(.roundedBorder)
-            .frame(width: fieldWidth)
-            .labelsHidden()
-            Text(verbatim: "%").foregroundStyle(.secondary)
         }
     }
 }
