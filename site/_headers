@@ -1,0 +1,18 @@
+# Cloudflare Pages headers, translated from netlify.toml (which stays until the move is verified).
+/
+  Link: </.well-known/api-catalog>; rel="api-catalog", </llms.txt>; rel="describedby", </openapi.yaml>; rel="service-desc", </homepage.md>; rel="alternate"; type="text/markdown"
+
+/.well-known/api-catalog
+  Content-Type: application/linkset+json; charset=utf-8
+
+/.well-known/agent-skills/index.json
+  Content-Type: application/json; charset=utf-8
+
+/openapi.yaml
+  Content-Type: application/yaml; charset=utf-8
+
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8

@@ -182,6 +182,6 @@ WebP ve AVIF, JPEG'den kesinlikle daha iyidir; aynı görsel kalite, daha küç�
 
 - Site: [dinkyfiles.com](https://dinkyfiles.com)
 - Kod ve sorunlar: [github.com/heyderekj/dinky](https://github.com/heyderekj/dinky)
-- E-posta: [help@dinkyfiles.com](mailto:help@dinkyfiles.com)
+- E-posta: [derek@testamentmade.com](mailto:derek@testamentmade.com)
 
 Derek Castelli tarafından yaptırılmıştır. Öneriler, hatalar ve "bu da yapılabilir mi?" gibi soruların tümü memnuniyetle karşılanır.

@@ -78,9 +78,11 @@ enum DockPresenceManager {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         // `MenuBarIcon` is the app mark, already vector + template-rendered in the asset catalog.
         // Its artwork runs edge to edge, so drawn at its native 22pt it reads bigger than the
-        // system items next to it; 18pt puts the glyph at ~15pt, matching them.
+        // system items next to it. 14pt gives about 14 × 12pt of ink, measured against the system's
+        // own items (Wi-Fi 15 × 11, Spotlight 14 × 13, Control Center 12 × 12). It's a filled shape,
+        // so it should sit at the small end of those.
         let icon = NSImage(named: "MenuBarIcon")
-        icon?.size = NSSize(width: 18, height: 18)
+        icon?.size = NSSize(width: 14, height: 14)
         icon?.accessibilityDescription = String(localized: "Dinky", comment: "Menu bar item accessibility label.")
         item.button?.image = icon
 

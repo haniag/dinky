@@ -182,6 +182,6 @@ WebP et AVIF sont strictement meilleurs que JPEG : même qualité visuelle, fic
 
 - Site : [dinkyfiles.com](https://dinkyfiles.com)
 - Code et problèmes : [github.com/heyderekj/dinky](https://github.com/heyderekj/dinky)
-- E-mail : [help@dinkyfiles.com](mailto:help@dinkyfiles.com)
+- E-mail : [derek@testamentmade.com](mailto:derek@testamentmade.com)
 
 Construit par Derek Castelli. Les suggestions, les bugs et « est-ce que ça pourrait aussi faire… » sont tous les bienvenus.
